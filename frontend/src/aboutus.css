@@ -1,0 +1,13 @@
+/* aboutus.css */
+
+.about-us-container {
+    padding: 50px;
+    border-radius: 5px;
+  }
+  
+  .about-us-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+  }
+  

@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #845EC2, #D65DB1, #FF6F91, #FF9671, #FFAF68, #FFC75F, #FFCE74);
+  animation: gradient 20s linear infinite;
+}
+
+  
+@keyframes gradient {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  max-width: 45%; /* Reduce the size of the logo */
+  height: auto;
+  display: block;
+  margin:  60px auto 0 auto;
+}
+
+h1 {
+  font-size: 36px; /* Increase font size for the title */
+  color: #333; /* Change title color */
+  text-transform: uppercase; /* Uppercase the title */
+  letter-spacing: 2px; /* Add letter spacing */
+  margin: 20px 0 10px 0; /* Adjust margin */
+  text-shadow: 2px 2px 4px rgba(12, 11, 11, 0.2); /* Add text shadow */
+}
+
+p {
+  font-size: 20px; /* Increase font size for the subtitle */
+  color: #4c4b4b; /* Change subtitle color */
+  margin: 5px 0; /* Adjust margin */
+}
+
+p1 {
+  font-size: 20px; /* Increase font size for the subtitle */
+  color: #ffffff; /* Change subtitle color */
+  margin: 5px 0; /* Adjust margin */
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer {
+  color: white;
+  text-align: center;
+  padding: 4px 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
