@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ee-simoneldavid",
+  "private_key_id": "727050f8b7110230f2e581d89a893548b08224e3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQClFwEddCnZjr8N\nfifxTs3JcmB95KcDg7X0EeWkOtWqGKb/UkzLE85n6VseMwae/szPwRqkIeq0oRB5\nYegZkcI7IhZ6Q6I02X83TcPxLPoDCDoPAqE7PSV9g0vVdshBDa3YhEA/X7SUM7JQ\nS92ywuHwtSyvCYboIvRynsvnaU32K6fbOdzn3dtUr6tET70q7Wz4iYJ/1j4Oy3X7\nsAIeyglFer/gFk3waAPghDT0d3qToBDYHcE3UgZrRhbptky1hPI/Te7OY65aSmAS\nGgvLKiBU/6mlKisvnJenrXQkcaRUdQYsEezol7zEYT5bB0Lq0jw4Hl6mPpiuMwBU\nqoVmMPpbAgMBAAECggEAGCgBEEO+mehiuUEz7AG5Z9gWGWW7MG710VRLE1hOiliY\nGvT6ap6nzZmeLRGPTvV+l4msccbKtop4xCIY2aDz2D45JsO9uNj4XenBmYkYvhfW\nkvqyB95/HVn4XzBFxgsP3IYhdoR1Alh8J3aqZm1QrS19b9FHjbELrrfgoyhL8ZCe\nc+ROrKp1FetkVL95ESwEsRBl6Yrpya0i+7hUVmFQP8un1ZUFypNuJV3CnsX3ZVPN\n0eUDmtw7S+AK8qbJsYLMHgN78UjzX49fZfnLmSrlSNIymXAibR/8ECYqxFUcXt0M\nluEbO//zk3Kz+RHXsDPm3zS0sEUkM3wpRuHqxysIHQKBgQDa131lg8lmkdD8yN5M\nIA3yZ4sCNabJaiVatzTX0gOCY5rHZThSznAzsa6tQpQw4eW4ArSwH/SoD7oHz2P+\nDpTsjQWMosrfHMH1j7gE/iUrEqciHp5yOJ1DDYPl9xE6f6je0o/S7aUiusayO+26\n47So1PHtCGZu1lEmWjYFLSBHvQKBgQDBHw1u45bU/V/bLkHccw0h4Wm9Mq8vwIji\nNXuoVr4MKJTYUYTfoiEDKgSby8Rlb898d6Hcuw4GN+YpijYAGtntkYLIJ5hrEFfz\naOWD288dH6evTH1InygyY0vSXzHByA1mUFHRqIhWOCdiLMy1BcBrI/gVK2CG1cAP\nlRzGIxl/9wKBgQCdngsA7JRIPcnJ51rEdWnWJ2FlbAL+mmbhGYcD0o0YgmjeKDcS\n3QDPGrB2tbdKJclwaPJ+z+VEjl8sdODOAO6eGUvf6Pg5Ddtc4/BkGC/o//xEhM0V\n81TBEKDpJrPP8FZOdlWEVAlWJDQr9yHYM1zRJN5CHIS6W74C44J44/GV+QKBgDtD\n3Et7bH5Qg2ov9+Y/KHiNRHXbaAevflJtN1WhyRDSI1t/KNe4WYkvC9sD3XGDrpjz\n3ahvfw5JeUimMYw2sUpGrWvfOtcgXN1GA6lDe3vkiwEw6AGxVhSghFQ7AnoFepc7\nbuB4Z96NvQhT1z52VWaL00Yr2aOHVTly+TGU8+5hAoGBAJI9+wt9uD69J2yuCQ10\nV1cKdhrQSxhA2UuxInCqqgQrQZLZgWLGYakos6FNB8X7UKcTa4PCH1AbRuW3CWa6\nxv2R8KsdzagcLpEh1qmKeGlPQB3gxioJYd++33VHkWGV3yHg9cF9ScquOjdhsY1Q\nI5ht1Ec+3wIMQno7Ox2cWjR5\n-----END PRIVATE KEY-----\n",
+  "client_email": "bianca@ee-simoneldavid.iam.gserviceaccount.com",
+  "client_id": "107093477749319958462",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bianca%40ee-simoneldavid.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
