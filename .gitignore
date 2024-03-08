@@ -1,2 +1,4 @@
 .gitsecret/keys/random_seed
 !*.secret
+backend/heat_island/ee-simoneldavid-99bb414586e9.json
+backend/heat_island/pdf_generator.py
