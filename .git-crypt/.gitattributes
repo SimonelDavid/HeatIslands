@@ -2,9 +2,4 @@
 # .gitattributes file in the directory where your files are.
 * !filter !diff
 *.gpg binary
-backend/heat_island/ee-simoneldavid-99bb414586e9.json filter=git-crypt diff=git-crypt
-backend/heat_island/pdf_generator.py filter=git-crypt diff=git-crypt
-nginx/certs/heat_island_aim_space_com_e338a_d1221_1713429682_ef96a3287b28207cc79da0e67d87546b.crt filter=git-crypt diff=git-crypt
-nginx/keys/e338a_d1221_d3a68031efc21bf5227aa5bbb31e1d71.key filter=git-crypt diff=git-crypt
-terraform/heat_island.pem filter=git-crypt diff=git-crypt
-terraform/secret filter=git-crypt diff=git-crypt
+
