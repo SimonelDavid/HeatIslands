@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   frontend:
     build: ./frontend
@@ -13,3 +14,12 @@ services:
     build: ./backend
     ports:
       - "8080:8080"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
