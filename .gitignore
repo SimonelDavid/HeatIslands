@@ -8,4 +8,5 @@ terraform/heat_island.pem
 terraform/secret
 terraform/plan*
 terraform/.terraform*
+terraform/.terraform/*
 terraform/terraform.tfstate*
