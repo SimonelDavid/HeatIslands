@@ -1,4 +1,5 @@
 .gitsecret/keys/random_seed
+.git-crypt
 !*.secret
 terraform/plan*
 terraform/.terraform*
