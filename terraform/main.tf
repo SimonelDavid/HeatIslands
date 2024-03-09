@@ -52,12 +52,7 @@ resource "aws_instance" "heat_island" {
   }
 }
 
-resource "aws_eip" "heat_island_eip" {
-  vpc = true
-  # Don't specify public_ip here, use allocation_id to reference the EIP
-}
-
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.heat_island.id
-  allocation_id = aws_eip.heat_island_eip.allocation_id
+  allocation_id = "eipalloc-0a9d27bf8ebe8dc52"  # Use the actual allocation ID of your existing EIP
 }

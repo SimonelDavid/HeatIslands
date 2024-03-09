@@ -10,3 +10,4 @@ terraform/plan*
 terraform/.terraform*
 terraform/.terraform/
 terraform/terraform.tfstate*
+.DS_Store
