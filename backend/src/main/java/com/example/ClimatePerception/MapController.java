@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://frontend:3000")
 public class MapController {
 
     private static final Logger log = LoggerFactory.getLogger(MapController.class);
@@ -179,11 +179,11 @@ public class MapController {
     }
 
     private String generateMapUrl(String fileName) {
-        return "http://localhost:8080/heat_island/html_export/" + fileName;
+        return "http://backend:8080/heat_island/html_export/" + fileName;
     }
 
     private String generatePDFUrl(String fileName) {
-        return "http://localhost:8080/heat_island/pdf_export/" + fileName;
+        return "http://backend:8080/heat_island/pdf_export/" + fileName;
     }
 
     private void saveFile(String fileName, String generatedHtml) {

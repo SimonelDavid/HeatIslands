@@ -93,7 +93,7 @@ function App() {
   };
 
   try {
-      const response = await fetch('http://localhost:8080/api/showMap', {
+      const response = await fetch('http://backend:8080/api/showMap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

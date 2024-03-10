@@ -14,7 +14,7 @@ RUN npm install
 EXPOSE 3000
 
 # Define environment variable
-ENV REACT_APP_BACKEND_URL=http://localhost:8080
+ENV REACT_APP_BACKEND_URL=http://backend:8080
 
 # Run npm start command when the container launches
 CMD ["npm", "start"]
