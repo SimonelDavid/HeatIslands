@@ -1,0 +1,2 @@
+[ec2_instances]
+3.73.146.56 ansible_user=admin

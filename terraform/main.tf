@@ -36,8 +36,8 @@ resource "aws_security_group" "heat_island_sg" {
 }
 
 resource "aws_instance" "heat_island" {
-  ami                    = "ami-03484a09b43a06725"  
-  instance_type          = "t2.micro"
+  ami                    = "ami-042e6fdb154c830c5"  
+  instance_type          = "t2.medium"
   key_name               = "heat_island"
   security_groups        = [aws_security_group.heat_island_sg.name]
   associate_public_ip_address = true
