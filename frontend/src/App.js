@@ -57,7 +57,7 @@ function App() {
     };
 
     try {
-      const response = await fetch('https://backend:8080/api/showMap', { // Use HTTPS
+      const response = await fetch('http://backend:8080/api/showMap', { // Use HTTPS
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

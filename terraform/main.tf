@@ -10,7 +10,7 @@ resource "aws_security_group" "heat_island_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["188.27.129.181/32", "46.97.169.92/32"]
+    cidr_blocks = ["188.27.130.244/32", "46.97.169.92/32"]
   }
 
   ingress {
