@@ -32,15 +32,6 @@ function App() {
       }));
     }
   };
-  
-
-  // const handleLoginClick = () => {
-  //   setShowLogin(true);
-  // };
-
-  const goToHome = () => {
-    setShowLogin(false); // Hide the login form
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,11 +113,15 @@ function App() {
   const toggleAboutUsModal = () => {
     setShowAboutUsModal(!showAboutUsModal); 
   };
+
+  const toggleLogin = () => {
+    setShowLogin(!showLogin);
+  };
   
   return (
     
     <div className="container"> 
-      <Navbar setShowLogin={setShowLogin} goToHome={goToHome} toggleAboutUsModal={toggleAboutUsModal} /> 
+      <Navbar setShowLogin={toggleLogin} toggleAboutUsModal={toggleAboutUsModal} /> 
       <div>
         <header>
           <img src={logo} alt="logo" className="logo" />

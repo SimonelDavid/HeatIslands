@@ -49,6 +49,11 @@ function Login() {
     }
   };
 
+  const { setLoggedIn } = useContext(AuthContext);
+
+  setLoggedIn(true);
+  redirectToWelcomePage();
+
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit}>

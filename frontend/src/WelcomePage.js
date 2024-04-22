@@ -41,32 +41,7 @@ function WelcomePage() {
     setResponseText('Please fill in all required fields.');
     return;
   }
-
-  // if (formData.startYear < 2013 || formData.endYear < 2013) {
-  //     setResponseText('Year must be greater than or equal to 2013');
-  //     return;
-  // }
-
-  // if (
-  //     formData.startMonth < 1 ||
-  //     formData.startMonth > 12 ||
-  //     formData.endMonth < 1 ||
-  //     formData.endMonth > 12
-  //   ) {
-  //     setResponseText('Month must be between 1 and 12');
-  //     return;
-  // }
-
-  // if (formData.startYear === formData.endYear && formData.startMonth >= formData.endMonth) {
-  //     setResponseText('Start month must be less than end month');
-  //     return;
-  // }
-
-  // if (formData.startYear >= formData.endYear) {
-  //     setResponseText('Start year must be less than end year');
-  //     return;
-  // }
-
+  
   const bodyData = {
     cityName: formData.cityName,
     startYear: formData.startDate.getFullYear().toString(),
