@@ -67,9 +67,9 @@ function App() {
     
       if (response.ok) {
         const data = await response.json();
-        // Process your data
+        setMapUrl(data.map_url);
       } else {
-        const text = await response.text(); // This will handle non-JSON responses better
+        const text = await response.text();
         throw new Error(`Server error: ${text}`);
       }
     } catch (error) {
