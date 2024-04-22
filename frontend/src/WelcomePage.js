@@ -51,32 +51,29 @@ function WelcomePage() {
     type: formData.type,
   };
 
-  try {
-      const response = await fetch('http://backend:8080/api/showMap', {
+    try {
+      const response = await fetch('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
       });
-
+    
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
       } else {
-        const errorData = await response.json();
-        console.error('Failed to fetch data', errorData);
-        setResponseText(`Error: ${errorData.message}`);
-        setMapUrl(''); 
+        const text = await response.text();
+        throw new Error(`Server error: ${text}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      setResponseText('An unexpected error occurred.');
-      setMapUrl(''); 
+      setResponseText(error.message);
     }
 
     try {
-      const response = await fetch('http://backend:8080/api/generatePDF', {
+      const response = await fetch('https://heat.island.aim-space.com/api/generatePDF', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +87,7 @@ function WelcomePage() {
         setPDFUrl(data.pdf_url);
         setResponseText(''); 
       } else {
-        const errorData = await response.json();
+        const errorData = await response.text();
         console.error('Failed to fetch data', errorData);
         setResponseText(`Error: ${errorData.message}`);
         setPDFUrl(''); 

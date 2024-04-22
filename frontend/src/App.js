@@ -57,26 +57,24 @@ function App() {
     };
 
     try {
-      const response = await fetch('http://backend:8080/api/showMap', { // Use HTTPS
+      const response = await fetch('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
       });
-
+    
       if (response.ok) {
         const data = await response.json();
-        setMapUrl(data.map_url);
+        // Process your data
       } else {
-        const errorData = await response.json();
-        setResponseText(`Error: ${errorData.message}`);
-        setMapUrl('');
+        const text = await response.text(); // This will handle non-JSON responses better
+        throw new Error(`Server error: ${text}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      setResponseText('An unexpected error occurred.');
-      setMapUrl('');
+      setResponseText(error.message);
     }
   };
 

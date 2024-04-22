@@ -179,11 +179,11 @@ public class MapController {
     }
 
     private String generateMapUrl(String fileName) {
-        return "http://backend:8080/heat_island/html_export/" + fileName;
+        return "https://heat.island.aim-space.com/heat_island/html_export/" + fileName;
     }
 
     private String generatePDFUrl(String fileName) {
-        return "http://backend:8080/heat_island/pdf_export/" + fileName;
+        return "https://heat.island.aim-space.com/heat_island/pdf_export/" + fileName;
     }
 
     private void saveFile(String fileName, String generatedHtml) {
