@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from './AuthContext'; // Ensure this is imported correctly
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -7,6 +8,7 @@ function Login() {
   });
 
   const [loginMessage, setLoginMessage] = useState('');
+  const { setLoggedIn } = useContext(AuthContext);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +31,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch('http://backend:8080/login', {
+      const response = await fetch('http://backend:8080/api/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +41,8 @@ function Login() {
 
       if (response.ok) {
         setLoginMessage('Authentication successful');
-        redirectToWelcomePage();
+        setLoggedIn(true); // Update login status only on successful authentication
+        redirectToWelcomePage(); // Redirect only on successful authentication
       } else {
         setLoginMessage('Incorrect login credentials');
       }
@@ -48,11 +51,6 @@ function Login() {
       setLoginMessage('An error occurred during authentication');
     }
   };
-
-  const { setLoggedIn } = useContext(AuthContext);
-
-  setLoggedIn(true);
-  redirectToWelcomePage();
 
   return (
     <div className="login-container">
@@ -68,7 +66,7 @@ function Login() {
           />
         </label>
         <label>
-          Parolă:
+          Password:
           <input
             type="password"
             name="password"
@@ -78,8 +76,8 @@ function Login() {
           />
         </label>
         <button type="submit">Login</button>
+        <p>{loginMessage}</p>
       </form>
-      <p>{loginMessage}</p>
     </div>
   );
 }
