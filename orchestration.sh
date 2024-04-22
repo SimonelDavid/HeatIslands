@@ -24,7 +24,7 @@ case $(uname) in
             sleep 10
         done
         echo "Instance is up and running."
-        ansible-playbook -i ../ansible/hosts ../ansible/deployment.yml --private-key=./heat_island.pem
+        ansible-playbook -i ../ansible/hosts ../ansible/deployment.yml --private-key=./heat-island.pem
     fi
     ;;
 *)
@@ -38,7 +38,7 @@ case $(uname) in
             sleep 10
         done
         echo "Instance is up and running."
-        ansible-playbook -i ../ansible/hosts ../ansible/deployment.yml --private-key=./heat_island.pem
+        ansible-playbook -i ../ansible/hosts ../ansible/deployment.yml --private-key=./heat-island.pem
     fi
     ;;
 esac
