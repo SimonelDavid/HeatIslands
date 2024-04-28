@@ -27,7 +27,7 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./prometheus:/etc/prometheus
+      - /opt/HeatIslands/prometheus:/etc/prometheus
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
@@ -35,6 +35,9 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.enable-lifecycle'
+    depends_on:
+      - cadvisor
+      - promtail
 
   grafana:
     image: grafana/grafana
@@ -42,9 +45,13 @@ services:
       - "3001:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - /opt/HeatIslands/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - /opt/HeatIslands/grafana/datasources:/etc/grafana/provisioning/datasources
     environment:
       - GF_SERVER_ROOT_URL=https://heat.island.aim-space.com/grafana/
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_SERVE_FROM_SUB_PATH=false
+    depends_on:
+      - prometheus
 
   cadvisor:
     image: gcr.io/google-containers/cadvisor:latest
@@ -56,6 +63,24 @@ services:
     ports:
       - "8081:8080"
 
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - /var/log:/var/log
+      - /opt/HeatIslands/promtail:/etc/promtail
+    command:
+      - '-config.file=/etc/promtail/promtail.yaml'
+    depends_on:
+      - loki
+
 volumes:
   prometheus-data:
   grafana-data:
+  loki-data:
