@@ -5,6 +5,8 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    volumes:
+      - shared-html:/app/public/maps:rw  # Mount shared volume to the directory where frontend expects HTML files
     environment:
       - REACT_APP_BACKEND_URL=http://localhost:8080
     depends_on:
@@ -14,6 +16,8 @@ services:
     build: ./backend
     ports:
       - "8080:8080"
+    volumes:
+      - shared-html:/app/heat_island/html_export:rw  # Mount shared volume to the directory where backend places HTML files
 
   nginx:
     build: ./nginx
@@ -63,4 +67,5 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
-  loki-data:
+  shared-html:  /opt/HeatIslands/maps
+

@@ -67,7 +67,8 @@ function App() {
     
       if (response.ok) {
         const data = await response.json();
-        setMapUrl(data.map_url);
+        // Assuming the map URL provided by the backend is a path relative to the frontend server's root
+        setMapUrl(`https://heat.island.aim-space.com${data.map_url}`); // Adjust as necessary if not hosted at root
       } else {
         const text = await response.text();
         throw new Error(`Server error: ${text}`);
