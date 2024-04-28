@@ -14,9 +14,9 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://heat.island.aim-space.com");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.addAllowedOrigin("https://heat.island.aim-space.com", "http://heat.island.aim-space.com");
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
