@@ -67,5 +67,5 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
-  shared-html:  /opt/HeatIslands/maps
+  shared-html:
 
