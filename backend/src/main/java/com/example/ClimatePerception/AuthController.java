@@ -14,7 +14,7 @@ import java.util.Map;
 import com.example.ClimatePerception.model.User;
 
 @RestController
-@CrossOrigin(origins = "http://frontend:3000")
+@CrossOrigin(origins = "https://heat.island.aim-space.com")
 public class AuthController {
     private final String csvFilePath = "src/main/resources/users.csv";
 
