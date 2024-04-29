@@ -158,12 +158,7 @@ function App() {
         </form>
         {mapUrl && (
           <div>
-            <iframe 
-                src={mapUrl} 
-                onError={() => setIframeError(true)}
-                style={{ width: '800px', height: '600px', border: 'none' }}
-            />
-            {iframeError && <p>Failed to load the map, but it's okay!</p>}
+            <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
           </div>
         )}
         <p>{responseText}</p>

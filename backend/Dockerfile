@@ -14,7 +14,7 @@ RUN apt-get update && \
 COPY . .
 
 # Install Python dependencies
-RUN pip3 install earthengine-api datetime geemap ipython requests Pillow reportlab fpdf sklearn numpy openai
+RUN pip3 install earthengine-api datetime geemap ipython requests Pillow reportlab fpdf scikit-learn numpy openai
 
 # Ensure the Gradle wrapper is executable
 RUN chmod +x ./gradlew
