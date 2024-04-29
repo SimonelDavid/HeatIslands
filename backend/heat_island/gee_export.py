@@ -1,6 +1,6 @@
 import ee
 import datetime
-import geemap
+import geemap.foliumap as geemap
 from IPython.display import Image
 import os
 import sys
@@ -8,6 +8,8 @@ import time
 from retreive_boundary import get_bounding_boxes
 from sklearn.cluster import KMeans
 import numpy as np
+
+#geemap.update_package()
 
 # Authenticate to Earth Engine
 service_account = 'api-call-simonel@ee-simoneldavid.iam.gserviceaccount.com'

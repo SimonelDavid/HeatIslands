@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://frontend:3000")
+@CrossOrigin(origins = "https://heat.island.aim-space.com")
 public class MapController {
 
     private static final Logger log = LoggerFactory.getLogger(MapController.class);
