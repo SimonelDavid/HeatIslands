@@ -67,8 +67,7 @@ function App() {
     
       if (response.ok) {
         const data = await response.json();
-        // Assuming the map URL provided by the backend is a path relative to the frontend server's root
-        setMapUrl(`https://heat.island.aim-space.com${data.map_url}`); // Adjust as necessary if not hosted at root
+        setMapUrl(data.map_url);
       } else {
         const text = await response.text();
         throw new Error(`Server error: ${text}`);
@@ -159,7 +158,12 @@ function App() {
         </form>
         {mapUrl && (
           <div>
-            <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
+            <iframe 
+                src={mapUrl} 
+                onError={() => setIframeError(true)}
+                style={{ width: '800px', height: '600px', border: 'none' }}
+            />
+            {iframeError && <p>Failed to load the map, but it's okay!</p>}
           </div>
         )}
         <p>{responseText}</p>

@@ -23,30 +23,38 @@ import java.io.InputStreamReader;
 public class MapController {
 
     private static final Logger log = LoggerFactory.getLogger(MapController.class);
-    private final String baseDirectory = "/path/to/shared/frontend/public/maps/";  // Directory shared with frontend
 
     @PostMapping(value = "/showMap", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> showMap(@RequestBody Map<String, String> formData) {
+
+        log.info("Received request for showMap with data: " + formData);
 
         String city = formData.get("cityName");
         String type = formData.get("type");
         String fileName = String.format("%s_%s_%s_%s_%s_%s.html", city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), type);
 
+        System.out.println(fileName);
+
         if (checkIfHtmlFileExists(fileName)) {
             String mapUrl = generateMapUrl(fileName);
+            System.out.println(mapUrl);
             return ResponseEntity.ok(Map.of("map_url", mapUrl));
         }
 
         runHeatIslandScript(city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), type);
-        boolean fileReady = waitForFile(baseDirectory + fileName, 120);
+
+        // Wait for the file to be created by the Python script, with a timeout of 60 seconds
+        boolean fileReady = waitForFile("heat_island/html_export/" + fileName, 120);
 
         if (!fileReady) {
             log.error("File was not created within the expected time.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "File not generated in time"));
+            // Handle the error condition, perhaps by returning an error response
         }
 
         String mapUrl = generateMapUrl(fileName);
+        System.out.println(mapUrl);
         return ResponseEntity.ok(Map.of("map_url", mapUrl));
+
     }
 
     @PostMapping(value = "/generatePDF", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -171,7 +179,7 @@ public class MapController {
     }
 
     private String generateMapUrl(String fileName) {
-        return "/maps/" + fileName;
+        return "https://heat.island.aim-space.com/heat_island/html_export/" + fileName;
     }
 
     private String generatePDFUrl(String fileName) {
@@ -198,7 +206,8 @@ public class MapController {
     }
 
     private boolean checkIfHtmlFileExists(String fileName) {
-        File file = new File(baseDirectory + fileName);
+        String filePath = "heat_island/html_export/" + fileName;
+        File file = new File(filePath);
         return file.exists();
     }
 
