@@ -1,14 +1,16 @@
 package com.example.ClimatePerception.model;
 
-import com.example.ClimatePerception.repository.csv.FileCsvHandler;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 import java.util.Objects;
 
+@Document(collection = "users")
 public class User {
+    @Id
+    private String id;
     private String email;
     private String password;
-
 
     public User() {
     }
@@ -17,6 +19,15 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -29,29 +40,31 @@ public class User {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(email, user.email) && Objects.equals(password, user.password);
+        return Objects.equals(id, user.id) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, password);
+        return Objects.hash(id, email, password);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "email='" + email + '\'' +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
-
-    public static List<User> readUsersFromCsv() {
-        return FileCsvHandler.readUsersFromCsv();
-    }
-
 }

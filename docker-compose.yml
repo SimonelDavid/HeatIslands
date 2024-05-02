@@ -72,6 +72,16 @@ services:
     networks:
       - app-network
 
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /opt/HeatIslands/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
