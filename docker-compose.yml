@@ -6,14 +6,18 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8080
+      - REACT_APP_BACKEND_URL=http://backend:8080
     depends_on:
       - backend
+    networks:
+      - app-network
 
   backend:
     build: ./backend
     ports:
       - "8080:8080"
+    networks:
+      - app-network
 
   nginx:
     build: ./nginx
@@ -23,6 +27,8 @@ services:
     depends_on:
       - frontend
       - backend
+    networks:
+      - app-network
 
   prometheus:
     image: prom/prometheus
@@ -32,12 +38,14 @@ services:
     ports:
       - "9090:9090"
     restart: unless-stopped
+    networks:
+      - app-network
 
   grafana:
     image: grafana/grafana
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
+      - /opt/HeatIslands/grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -48,6 +56,8 @@ services:
     restart: unless-stopped
     depends_on:
       - prometheus
+    networks:
+      - app-network
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
@@ -59,8 +69,13 @@ services:
     ports:
       - "8081:8080"
     restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   prometheus-data:
   grafana-data:
-
