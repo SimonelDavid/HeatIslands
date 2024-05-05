@@ -24,7 +24,7 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m])",
+          "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m])",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "A"
         }
@@ -53,7 +53,7 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}",
+          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "B"
         }
@@ -82,7 +82,7 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m]) + rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m])",
+          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m]) + rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m])",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "C"
         }
