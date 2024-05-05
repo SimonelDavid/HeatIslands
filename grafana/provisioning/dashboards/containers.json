@@ -1,14 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -29,12 +19,13 @@
   "links": [],
   "panels": [
     {
-      "title": "Memory Usage",
+      "title": "CPU Usage",
       "type": "graph",
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{name=~\"^heatislands_.+\"}",
+          "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m])",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "A"
         }
       ],
@@ -46,9 +37,10 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
-          "label": null,
-          "logBase": 2
+          "format": "percent",
+          "logBase": 1,
+          "max": null,
+          "min": "0"
         },
         {
           "format": "short"
@@ -56,12 +48,13 @@
       ]
     },
     {
-      "title": "CPU Usage",
+      "title": "Memory Usage",
       "type": "graph",
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{name=~\"^heatislands_.+\"}[1m])",
+          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "B"
         }
       ],
@@ -73,9 +66,9 @@
       },
       "yaxes": [
         {
-          "format": "percent",
+          "format": "bytes",
           "logBase": 1,
-          "max": "100",
+          "max": null,
           "min": "0"
         },
         {
@@ -84,51 +77,28 @@
       ]
     },
     {
-      "title": "Disk I/O Read",
+      "title": "Network I/O",
       "type": "graph",
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(container_fs_reads_bytes_total{name=~\"^heatislands_.+\"}[1m])",
+          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m]) + rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx|grafana\"}[1m])",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "C"
         }
       ],
       "gridPos": {
         "h": 9,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 9
       },
       "yaxes": [
         {
-          "format": "bytes",
-          "logBase": 1
-        },
-        {
-          "format": "short"
-        }
-      ]
-    },
-    {
-      "title": "Disk I/O Write",
-      "type": "graph",
-      "datasource": "${DS_PROMETHEUS}",
-      "targets": [
-        {
-          "expr": "rate(container_fs_writes_bytes_total{name=~\"^heatislands_.+\"}[1m])",
-          "refId": "D"
-        }
-      ],
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 9
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "logBase": 1
+          "format": "bps",
+          "logBase": 1,
+          "max": null,
+          "min": "0"
         },
         {
           "format": "short"
@@ -136,22 +106,19 @@
       ]
     }
   ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": ["prometheus", "docker", "containers"],
   "templating": {
     "list": [
       {
-        "type": "query",
-        "datasource": "${DS_PROMETHEUS}",
-        "name": "container",
-        "request": "query_result(container_memory_usage_bytes)",
-        "refresh": 2,
-        "includeAll": true,
-        "regex": "/^heatislands_.+$/"
+        "type": "datasource",
+        "datasource": "Prometheus",
+        "name": "DS_PROMETHEUS",
+        "refresh": 1
       }
     ]
   },
-  "schemaVersion": 26,
-  "style": "dark",
-  "tags": ["prometheus", "cadvisor", "containers"],
   "time": {
     "from": "now-6h",
     "to": "now"
