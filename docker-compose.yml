@@ -46,6 +46,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - /opt/HeatIslands/grafana/provisioning:/etc/grafana/provisioning
+      - /opt/HeatIslands/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/main.yaml
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
