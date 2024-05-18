@@ -153,6 +153,9 @@ function App() {
               <option value="city">City</option>
               <option value="country">Country</option>
               <option value="county">County</option>
+              <option value="county">Province</option>
+              <option value="county">Municipality</option>
+              <option value="county">Town</option>
             </select>
           </label>
           <br />

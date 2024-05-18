@@ -2,8 +2,21 @@ import requests
 
 def get_bounding_boxes(city_name, type):
     url = f'https://nominatim.openstreetmap.org/search.php?q={city_name}&polygon_geojson=1&format=json'
-    response = requests.get(url)
-    data = response.json()
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+    except requests.exceptions.RequestException as e:
+        print(f"HTTP error occurred: {e}")
+        return None
+
+    try:
+        data = response.json()
+    except requests.exceptions.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        print(f"Response text: {response.text}")
+        return None
 
     if not data:
         print(f"No data found for {city_name}")
@@ -31,4 +44,3 @@ def get_bounding_boxes(city_name, type):
     else:
         print(f"Unsupported geometry type for {city_name}")
         return None
-

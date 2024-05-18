@@ -1,3 +1,4 @@
+# Import necessary modules
 import ee
 import datetime
 import geemap.foliumap as geemap
@@ -8,8 +9,6 @@ import time
 from retreive_boundary import get_bounding_boxes
 from sklearn.cluster import KMeans
 import numpy as np
-
-#geemap.update_package()
 
 # Authenticate to Earth Engine
 service_account = 'api-call-simonel@ee-simoneldavid.iam.gserviceaccount.com'
@@ -72,6 +71,10 @@ def get_aoi(city_name, address_type):
         return None
 
 aoi = get_aoi(city_name, address_type)
+
+if aoi is None:
+    print("Failed to retrieve AOI for the given city and address type.")
+    sys.exit(1)
 
 # Create a Map
 Map = geemap.Map()
@@ -202,7 +205,6 @@ cold_spot_contours = detect_cold_spot_contours(clip_mean_ST.select('ST_B10'), co
 
 # Add the contours to the map window
 Map.addLayer(cold_spot_contours, {'color': 'blue'}, "Cold Spots", DISPLAY)
-
 
 # Display the map
 Map
