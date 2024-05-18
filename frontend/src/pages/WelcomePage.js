@@ -179,9 +179,9 @@ function WelcomePage() {
               <option value="city">City</option>
               <option value="country">Country</option>
               <option value="county">County</option>
-              <option value="county">Province</option>
-              <option value="county">Municipality</option>
-              <option value="county">Town</option>
+              <option value="province">Province</option>
+              <option value="municipality">Municipality</option>
+              <option value="town">Town</option>
             </select>
           </label>
           <br />
