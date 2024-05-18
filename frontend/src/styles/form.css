@@ -3,22 +3,25 @@ form {
     margin: auto;
     padding: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.704);
+    box-shadow: 1px 1px 10px 1px rgb(148, 148, 148);
   }
   
   label {
     display: block;
-    margin-bottom: 8px;
+    /* margin-bottom: 8px; */
     font-weight: bold;
   }
   
   input {
-    width: 100%;
+    width: 70%;
     padding: 8px;
     margin-bottom: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    margin-left: 10px;
   }
   
   button {
@@ -36,14 +39,15 @@ form {
   }
 
   select {
-    width: 100%;
+    width: 80%;
     padding: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
     background-size: 20px; 
     cursor: pointer;
+    margin-left: 10px;
   }
   
   select:focus {

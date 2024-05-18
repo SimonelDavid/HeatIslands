@@ -1,0 +1,53 @@
+/* navbar.css */
+.navbar {
+  background-color: #464545c8;
+  color: white;
+  padding: 1vh 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-list {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-between; /* Align items to the left and right */
+  align-items: center; /* Vertically center the items */ 
+  margin: 0 2vw; /* Add some margin for spacing */
+}
+
+.navbar-logo-container {
+  flex-grow: 1;
+}
+
+.navbar-logo {
+  height: 4vh;
+}
+
+.navbar-items {
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 2;
+}
+
+.navbar-item {
+  margin-left: 2vw;
+}
+
+.navbar-item a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.login-container {
+  position: fixed;
+  top: 60px; /* Adjust this value to align with the bottom of the navbar */
+  right: 20px; /* Adjust this value to control the right spacing */
+  width: 300px; /* Adjust the width as needed */
+  padding: 20px;
+  z-index: 1001; /* Set a higher z-index to ensure it's above the navbar */
+}

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { AuthProvider } from './AuthContext';
-import Navbar from './Navbar';
-import Login from './Login';
-import AboutUs from './AboutUs';
+import { AuthProvider } from '../pages/AuthContext';
+import Navbar from '../pages/Navbar';
+import Login from '../pages/Login';
+import AboutUs from '../pages/AboutUs';
+import ContactUs from '../pages/ContactUs';
 import DatePicker from 'react-datepicker';
-import logo from './assets/icon.png';
 import 'react-datepicker/dist/react-datepicker.css';
-import './styles.css';
-import './form.css';
-import './navbar.css';
+import '../styles/styles.css';
+import '../styles/form.css';
+import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
   const [responseText, setResponseText] = useState('');
   const [showLogin, setShowLogin] = useState(false);
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
+  const [showContactUsModal, setShowContactUsModal] = useState(false);
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -64,7 +65,7 @@ function App() {
         },
         body: JSON.stringify(bodyData),
       });
-    
+
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
@@ -82,6 +83,10 @@ function App() {
     setShowAboutUsModal(!showAboutUsModal);
   };
 
+  const toggleContactUsModal = () => {
+    setShowContactUsModal(!showContactUsModal);
+  };
+
   const toggleLogin = () => {
     setShowLogin(!showLogin);
   };
@@ -89,12 +94,15 @@ function App() {
   return (
     <AuthProvider> {/* Wrap your component hierarchy with AuthProvider */}
       <div className="container">
-        <Navbar setShowLogin={toggleLogin} toggleAboutUsModal={toggleAboutUsModal} />
+        <Navbar 
+          setShowLogin={toggleLogin} 
+          toggleAboutUsModal={toggleAboutUsModal} 
+          toggleContactUsModal={toggleContactUsModal}
+        />
         <div>
           <header>
-            <img src={logo} alt="logo" className="logo" />
-            <h1>HeatScape</h1>
-            <p>We know all the hotspots in town</p>
+            <h1>Welcome to the Heat Island Analysis Tool</h1>
+            <p>This tool allows you to analyze urban heat islands by selecting a specific location, type of location (city, county, or country), and a time range. Upon submission, you will receive a heat map displaying the heat island effect for your specified parameters.</p>
           </header>
         </div>
         {showLogin && (
@@ -102,15 +110,9 @@ function App() {
             <Login />
           </div>
         )}
-        {showAboutUsModal && (
-          <div className="about-us-modal">
-            <button onClick={toggleAboutUsModal} className="close-button">X</button>
-            <AboutUs />
-          </div>
-        )}
         <form onSubmit={handleSubmit}>
-          <label>
-            City:
+          <label data-guideline="Enter the name of the city, county or country you want to analyze.">
+            Location:
             <input
               type="text"
               name="cityName"
@@ -120,8 +122,8 @@ function App() {
             />
           </label>
           <br />
-          <label>
-            Select start date:
+          <label data-guideline="Should not be before the year 2012;">
+            Select start date: 
             <DatePicker
               selected={formData.startDate}
               name='startDate'
@@ -132,8 +134,8 @@ function App() {
               maxDate={addMonths(new Date(), -1)}
             />
           </label>
-          <label>
-            Select end date:
+          <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
+            Select end date: 
             <DatePicker
               selected={formData.endDate}
               name='endDate'
@@ -145,7 +147,7 @@ function App() {
             />
           </label>
           <br />
-          <label>
+          <label data-guideline="Select the type of location (city, county, or country).">
             Type:
             <select name="type" value={formData.type} onChange={handleInputChange}>
               <option value="city">City</option>
@@ -161,9 +163,21 @@ function App() {
             <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
           </div>
         )}
+        {showAboutUsModal && (
+          <div className="about-us-modal">
+            <button onClick={toggleAboutUsModal} className="close-button">X</button>
+            <AboutUs />
+          </div>
+        )}
+        {showContactUsModal && (
+          <div className="contact-us-modal">
+            <button onClick={toggleContactUsModal} className="close-button">X</button>
+            <ContactUs />
+          </div>
+        )}
         <p>{responseText}</p>
         <div id="footer" className='footer'>
-          <p>Contact: +40 (734) 989 230</p>
+          <p>©DAVID Simonel-Olimpiu All rights reserved 2024</p>
         </div>
       </div>
     </AuthProvider>

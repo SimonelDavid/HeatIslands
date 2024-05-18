@@ -9,11 +9,10 @@ body {
   flex-direction: column; 
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, #845EC2, #D65DB1, #FF6F91, #FF9671, #FFAF68, #FFC75F, #FFCE74);
+  background: linear-gradient(to right, #f85a5a, #FF9671, #f6fa85,#f4f2f7, #97fdfd, #87e0f6, #74c3ff);
   animation: gradient 20s linear infinite;
 }
 
-  
 @keyframes gradient {
   0% {
     background-position: 100% 0;
@@ -25,7 +24,7 @@ body {
 
 header {
   text-align: center;
-  padding: 20px;
+  padding: 50px;
 }
 
 .logo {
@@ -36,7 +35,7 @@ header {
 }
 
 h1 {
-  font-size: 36px; /* Increase font size for the title */
+  font-size: 30px; /* Increase font size for the title */
   color: #333; /* Change title color */
   text-transform: uppercase; /* Uppercase the title */
   letter-spacing: 2px; /* Add letter spacing */
@@ -73,4 +72,24 @@ p1 {
   bottom: 0;
   left: 0;
   width: 100%;
+}
+
+label {
+  position: relative;
+}
+
+label:hover::after {
+  content: attr(data-guideline);
+  position: absolute;
+  top: -10px;
+  left: 100%;
+  white-space: nowrap;
+  background: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 10;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-left: 10px;
 }
