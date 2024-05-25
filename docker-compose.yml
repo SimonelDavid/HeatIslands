@@ -56,9 +56,7 @@ services:
       - grafana-data:/var/lib/grafana
       - /opt/HeatIslands/grafana/provisioning:/etc/grafana/provisioning
       - /opt/HeatIslands/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards.yml
-      - /opt/HeatIslands/grafana/dashboards/container_stats.json:/etc/grafana/provisioning/dashboards/container_stats.json
-      - /opt/HeatIslands/grafana/dashboards/container_logs.json:/etc/grafana/provisioning/dashboards/container_logs.json
-      - /opt/HeatIslands/grafana/dashboards/machine_stats.json:/etc/grafana/provisioning/dashboards/machine_stats.json
+      - /opt/HeatIslands/grafana/dashboards:/etc/grafana/provisioning/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
