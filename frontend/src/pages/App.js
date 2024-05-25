@@ -50,6 +50,7 @@ function App() {
   const [loading, setLoading] = useState(false); // State for loading
   const [errors, setErrors] = useState({});
   const [recommendation, setRecommendation] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -59,6 +60,13 @@ function App() {
         [name]: value,
       }));
     }
+  };
+
+  const handleDateChange = (name, date) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date,
+    }));
   };
 
   const validateForm = () => {
@@ -85,7 +93,7 @@ function App() {
       setRecommendation('');
     }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
   useEffect(() => {
@@ -95,7 +103,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!isFormValid) {
       return;
     }
 
@@ -183,7 +191,7 @@ function App() {
             <DatePicker
               selected={formData.startDate}
               name='startDate'
-              onChange={(date) => handleInputChange({ target: { name: 'startDate', value: date } })}
+              onChange={(date) => handleDateChange('startDate', date)}
               placeholderText="Select start date"
               dateFormat="yyyy-MM-dd"
               minDate={new Date(2013, 0, 1)}
@@ -196,7 +204,7 @@ function App() {
             <DatePicker
               selected={formData.endDate}
               name='endDate'
-              onChange={(date) => handleInputChange({ target: { name: 'endDate', value: date } })}
+              onChange={(date) => handleDateChange('endDate', date)}
               placeholderText="Select end date"
               dateFormat="yyyy-MM-dd"
               minDate={new Date(2013, 0, 1)}
@@ -219,7 +227,7 @@ function App() {
           <br />
           {recommendation && <div className="recommendation-popup">{recommendation}</div>}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button type="submit" disabled={!validateForm()}>Show the map</button>
+            <button type="submit" disabled={!isFormValid}>Show the map</button>
             {loading && (
               <div style={{ marginLeft: '10px' }}>
                 <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />

@@ -70,3 +70,16 @@ form {
     pointer-events: none; 
   }
   
+
+  .error-popup {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+  }
+  
+  .recommendation-popup {
+    color: orange;
+    font-size: 0.9em;
+    margin-top: 5px;
+  }
+  
