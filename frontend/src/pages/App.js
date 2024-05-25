@@ -10,7 +10,7 @@ import '../styles/styles.css';
 import '../styles/form.css';
 import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
-import { TailSpin } from 'react-loader-spinner'; // Import the spinner
+import { TailSpin } from 'react-loader-spinner';
 
 function App() {
   const [formData, setFormData] = useState({
