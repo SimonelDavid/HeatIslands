@@ -128,82 +128,72 @@ Map.addLayer(clip_mean_ST, {
     'palette': ['blue', 'white', 'red']
 }, "ST", DISPLAY)
 
+# Compute statistics: mean and standard deviation of the temperature within the AOI
+stats = clip_mean_ST.reduceRegion(
+    reducer=ee.Reducer.mean().combine(
+        reducer2=ee.Reducer.stdDev(),
+        sharedInputs=True
+    ),
+    geometry=aoi,
+    scale=30,
+    maxPixels=1e9
+)
+
+mean_temp = stats.get('ST_B10_mean').getInfo()
+std_dev_temp = stats.get('ST_B10_stdDev').getInfo()
+
+# Define dynamic thresholds
+heat_island_threshold_temp = mean_temp + 1 * std_dev_temp
+hot_spot_threshold_temp = mean_temp + 2 * std_dev_temp
+cold_spot_threshold_temp = mean_temp - 1 * std_dev_temp
+
 def detect_heat_island_contours(image, threshold_temp):
-    # Create a binary mask where pixels above the temperature threshold are marked as 1 (heat islands)
     mask = image.gt(threshold_temp).selfMask()
-    
-    # Use a focal_max operation to connect nearby 'hot' pixels into a single cluster
-    connected = mask.focal_max(kernel=ee.Kernel.circle(radius=1), iterations=2)
-    
-    # Vectorize the connected pixels into polygons
+    # Increase the radius and iterations to merge smaller heat islands into larger ones
+    connected = mask.focal_max(kernel=ee.Kernel.circle(radius=7), iterations=8)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
         reducer=ee.Reducer.countEvery(),
-        scale=30,  # Set an appropriate scale for your analysis
+        scale=30,
         maxPixels=1e8,
         geometry=aoi
     )
-    
     return vectors
-
-heat_island_threshold_temp = 37  # Example threshold, in Celsius
-
-# In your main script where you apply the function
-heat_island_contours = detect_heat_island_contours(clip_mean_ST.select('ST_B10'), heat_island_threshold_temp)
-
-# Add the contours to the map window
-Map.addLayer(heat_island_contours, {'color': 'yellow'}, "Heat Island", DISPLAY)
 
 def detect_hot_spot_contours(image, threshold_temp):
-    # Create a binary mask where pixels above the temperature threshold are marked as 1 (heat islands)
     mask = image.gt(threshold_temp).selfMask()
-    
-    # Use a focal_max operation to connect nearby 'hot' pixels into a single cluster
-    connected = mask.focal_max(kernel=ee.Kernel.circle(radius=1), iterations=2)
-    
-    # Vectorize the connected pixels into polygons
+    # Increase the radius and iterations to merge smaller hot spots into larger ones
+    connected = mask.focal_max(kernel=ee.Kernel.circle(radius=1), iterations=1)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
         reducer=ee.Reducer.countEvery(),
-        scale=30,  # Set an appropriate scale for your analysis
+        scale=30,
         maxPixels=1e8,
         geometry=aoi
     )
-    
     return vectors
-
-hpt_spot_threshold_temp = 43  # Example threshold, in Celsius
-
-# In your main script where you apply the function
-hot_spot_contours = detect_hot_spot_contours(clip_mean_ST.select('ST_B10'), hpt_spot_threshold_temp)
-
-# Add the contours to the map window
-Map.addLayer(hot_spot_contours, {'color': 'red'}, "Hot Spots", DISPLAY)
 
 def detect_cold_spot_contours(image, threshold_temp):
-    # Create a binary mask where pixels below the temperature threshold are marked as 1 (cold spots)
     mask = image.lt(threshold_temp).selfMask()
-    
-    # Use a focal_min operation to connect nearby 'cold' pixels into a single cluster
-    connected = mask.focal_min(kernel=ee.Kernel.circle(radius=1), iterations=2)
-    
-    # Vectorize the connected pixels into polygons
+    # Increase the radius and iterations to merge smaller cold spots into larger ones
+    connected = mask.focal_min(kernel=ee.Kernel.circle(radius=2), iterations=3)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
         reducer=ee.Reducer.countEvery(),
-        scale=30,  # Set an appropriate scale for your analysis
+        scale=30,
         maxPixels=1e8,
         geometry=aoi
     )
-    
     return vectors
 
-cold_spot_threshold_temp = 34  # Example threshold, in Celsius
-
-# In your main script where you apply the function
+# Detect contours using dynamic thresholds
+heat_island_contours = detect_heat_island_contours(clip_mean_ST.select('ST_B10'), heat_island_threshold_temp)
+hot_spot_contours = detect_hot_spot_contours(clip_mean_ST.select('ST_B10'), hot_spot_threshold_temp)
 cold_spot_contours = detect_cold_spot_contours(clip_mean_ST.select('ST_B10'), cold_spot_threshold_temp)
 
 # Add the contours to the map window
+Map.addLayer(heat_island_contours, {'color': 'yellow'}, "Heat Island", DISPLAY)
+Map.addLayer(hot_spot_contours, {'color': 'red'}, "Hot Spots", DISPLAY)
 Map.addLayer(cold_spot_contours, {'color': 'blue'}, "Cold Spots", DISPLAY)
 
 # Display the map
@@ -222,7 +212,6 @@ def is_file_written(file_path, timeout=120):
     start_time = time.time()
     while time.time() - start_time < timeout:
         if os.path.exists(file_path):
-            # Optionally, check file size or modification time here
             return True
         time.sleep(2)
     return False

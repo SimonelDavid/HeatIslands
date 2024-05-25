@@ -30,6 +30,15 @@ services:
     networks:
       - app-network
 
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
   prometheus:
     image: prom/prometheus
     volumes:
@@ -73,16 +82,6 @@ services:
     networks:
       - app-network
 
-  mongo:
-    image: mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - /opt/HeatIslands/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
@@ -90,3 +89,4 @@ networks:
 volumes:
   prometheus-data:
   grafana-data:
+  mongo-data:

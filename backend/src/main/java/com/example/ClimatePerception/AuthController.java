@@ -1,6 +1,8 @@
 package com.example.ClimatePerception;
 
-import com.example.ClimatePerception.repository.csv.FileCsvHandler;
+import com.example.ClimatePerception.model.User;
+import com.example.ClimatePerception.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,15 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
-
-import com.example.ClimatePerception.model.User;
 
 @RestController
 @CrossOrigin(origins = "https://heat.island.aim-space.com")
 public class AuthController {
-    private final String csvFilePath = "src/main/resources/users.csv";
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> credentials) {
@@ -30,15 +31,8 @@ public class AuthController {
         }
     }
 
-    private boolean verifierAuthenticate(String username, String password) {
-        List<User> users = FileCsvHandler.readUsersFromCsv();
-
-        for (User user : users) {
-            if (user.getEmail().equals(username) && user.getPassword().equals(password)) {
-                return true;
-            }
-        }
-
-        return false;
+    private boolean verifierAuthenticate(String email, String password) {
+        User user = userService.findByEmailAndPassword(email, password);
+        return user != null;
     }
 }
