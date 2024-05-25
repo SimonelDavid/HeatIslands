@@ -10,9 +10,9 @@ import '../styles/styles.css';
 import '../styles/form.css';
 import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
-import { TailSpin } from 'react-loader-spinner'; // Import the spinner
+import { TailSpin } from 'react-loader-spinner';
 
-const fetchWithTimeout = (url, options, timeout = 8000) => {
+const fetchWithTimeout = (url, options, timeout = 120000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -88,7 +88,7 @@ function App() {
       newErrors.endDate = 'End date should be at least one month after the start date.';
     }
     if (startDate && ![3, 4, 5, 6, 7, 8].includes(startDate.getMonth())) {
-      setRecommendation('It is recommended to select a hot month (April to September).');
+      setRecommendation('It is recommended to select a summer-like month (April to September).');
     } else {
       setRecommendation('');
     }

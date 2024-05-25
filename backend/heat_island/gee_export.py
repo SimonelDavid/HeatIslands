@@ -189,6 +189,14 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
     hot_spot_contours = hot_spot_future.result()
     cold_spot_contours = cold_spot_future.result()
 
+# Add the ST layer to the map window.
+Map.addLayer(clip_mean_ST, {
+    'bands': 'ST_B10',
+    'min': cold_spot_threshold_temp,
+    'max': hot_spot_threshold_temp,
+    'palette': ['blue', 'white', 'red']
+}, "ST", DISPLAY)
+
 # Add the contours to the map window in parallel
 with concurrent.futures.ThreadPoolExecutor() as executor:
     heat_island_layer_future = executor.submit(Map.addLayer, heat_island_contours, {'color': 'yellow'}, "Heat Island", DISPLAY)
@@ -228,12 +236,12 @@ total_cold_spot_area = sum([ee.Geometry(feature['geometry']).area(maxError=1).ge
 
 # Prepare stats data for the CSV file
 stats_csv_data = [
-    {'category': 'Total Heat Island Area', 'value': total_heat_island_area},
+    {'category': 'Total Heat Island Area(m^2)', 'value': total_heat_island_area},
     {'category': 'Number of Hot Spots', 'value': len(hot_spot_features)},
-    {'category': 'Total Hot Spot Area', 'value': total_hot_spot_area},
+    {'category': 'Total Hot Spot Area(m^2)', 'value': total_hot_spot_area},
     {'category': 'Number of Cold Spots', 'value': len(cold_spot_features)},
-    {'category': 'Total Cold Spot Area', 'value': total_cold_spot_area},
-    {'category': 'Total Area Surface (m^2)', 'value': ee.Geometry(aoi).area(maxError=1).getInfo()}
+    {'category': 'Total Cold Spot Area(m^2)', 'value': total_cold_spot_area},
+    {'category': 'Total Area Surface(m^2)', 'value': ee.Geometry(aoi).area(maxError=1).getInfo()}
 ]
 
 # Display the map

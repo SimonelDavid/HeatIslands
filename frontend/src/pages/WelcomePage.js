@@ -1,5 +1,5 @@
 import '../styles/styles.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/form.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,6 +9,29 @@ import Login from '../pages/Login';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import { AuthProvider } from '../pages/AuthContext';
+import { TailSpin } from 'react-loader-spinner';
+
+const fetchWithTimeout = (url, options, timeout = 120000) => {
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const fetchPromise = fetch(url, { ...options, signal });
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+
+    fetchPromise
+      .then((response) => {
+        clearTimeout(timeoutId);
+        resolve(response);
+      })
+      .catch((error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+};
 
 function WelcomePage() {
   const [formData, setFormData] = useState({
@@ -24,6 +47,10 @@ function WelcomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
   const [showContactUsModal, setShowContactUsModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [recommendation, setRecommendation] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -35,16 +62,48 @@ function WelcomePage() {
     }
   };
 
+  const handleDateChange = (name, date) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    const { cityName, startDate, endDate } = formData;
+    if (!cityName) {
+      newErrors.cityName = 'Location is required.';
+    }
+    if (!startDate) {
+      newErrors.startDate = 'Start date is required.';
+    } else if (startDate.getFullYear() < 2013) {
+      newErrors.startDate = 'Start date should not be before the year 2013.';
+    }
+    if (!endDate) {
+      newErrors.endDate = 'End date is required.';
+    } else if (endDate.getFullYear() > 2023) {
+      newErrors.endDate = 'End date should not be after the year 2023.';
+    } else if (startDate && endDate && endDate <= startDate) {
+      newErrors.endDate = 'End date should be at least one month after the start date.';
+    }
+    if (startDate && ![3, 4, 5, 6, 7, 8].includes(startDate.getMonth())) {
+      setRecommendation('It is recommended to select a summer-like month (April to September).');
+    } else {
+      setRecommendation('');
+    }
+    setErrors(newErrors);
+    setIsFormValid(Object.keys(newErrors).length === 0);
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      formData.cityName === '' ||
-      formData.type === '' ||
-      formData.startDate === null ||
-      formData.endDate === null
-    ) {
-      setResponseText('Please fill in all required fields.');
+    if (!isFormValid) {
       return;
     }
 
@@ -57,14 +116,16 @@ function WelcomePage() {
       type: formData.type,
     };
 
+    setLoading(true); // Set loading to true before the request
+
     try {
-      const response = await fetch('https://heat.island.aim-space.com/api/showMap', {
+      const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      });
+      }, 15000); // Set timeout to 15 seconds
 
       if (response.ok) {
         const data = await response.json();
@@ -79,17 +140,16 @@ function WelcomePage() {
     }
 
     try {
-      const response = await fetch('https://heat.island.aim-space.com/api/generatePDF', {
+      const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/generatePDF', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      });
+      }, 15000); // Set timeout to 15 seconds
 
       if (response.ok) {
         const data = await response.json();
-        console.log("PDF URL:", data.pdf_url);
         setPDFUrl(data.pdf_url);
         setResponseText('');
       } else {
@@ -102,6 +162,8 @@ function WelcomePage() {
       console.error('Error:', error);
       setResponseText('An unexpected error occurred.');
       setPDFUrl('');
+    } finally {
+      setLoading(false); // Set loading to false after the request
     }
   };
 
@@ -128,7 +190,7 @@ function WelcomePage() {
         <div>
           <header>
             <h1>You logged in!</h1>
-            <p>In addition of the maps of the heat islands, here you will receive a land cover on the choosed location and a recomandation on how to mitigate that heat island and to have less hotspots.</p>
+            <p>In addition to the maps of the heat islands, here you will receive a land cover on the chosen location and a recommendation on how to mitigate that heat island and to have fewer hotspots.</p>
           </header>
         </div>
         {showLogin && (
@@ -146,6 +208,7 @@ function WelcomePage() {
               onChange={handleInputChange}
               placeholder="Type here..."
             />
+            {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
           </label>
           <br />
           <label data-guideline="Should not be before the year 2012;">
@@ -153,24 +216,26 @@ function WelcomePage() {
             <DatePicker
               selected={formData.startDate}
               name='startDate'
-              onChange={(date) => handleInputChange({ target: { name: 'startDate', value: date } })}
+              onChange={(date) => handleDateChange('startDate', date)}
               placeholderText="Select start date"
               dateFormat="yyyy-MM-dd"
               minDate={new Date(2013, 0, 1)}
               maxDate={addMonths(new Date(), -1)}
             />
+            {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
           </label>
           <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
             Select end date:
             <DatePicker
               selected={formData.endDate}
               name='endDate'
-              onChange={(date) => handleInputChange({ target: { name: 'endDate', value: date } })}
+              onChange={(date) => handleDateChange('endDate', date)}
               placeholderText="Select end date"
               dateFormat="yyyy-MM-dd"
               minDate={new Date(2013, 0, 1)}
               maxDate={addMonths(new Date(), -1)}
             />
+            {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
           </label>
           <br />
           <label data-guideline="Select the type of location (city, county, or country).">
@@ -185,7 +250,15 @@ function WelcomePage() {
             </select>
           </label>
           <br />
-          <button type="submit">Show the map</button>
+          {recommendation && <div className="recommendation-popup">{recommendation}</div>}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button type="submit" disabled={!isFormValid}>Show the map</button>
+            {loading && (
+              <div style={{ marginLeft: '10px' }}>
+                <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
+              </div>
+            )}
+          </div>
         </form>
         {mapUrl && (
           <div>
