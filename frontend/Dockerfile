@@ -8,7 +8,8 @@ WORKDIR /app
 COPY . .
 
 # Install any needed packages specified in package.json
-RUN npm install
+RUN npm install && \
+    npm install react-loader-spinner
 
 # Make port 3000 available to the world outside this container
 EXPOSE 3000

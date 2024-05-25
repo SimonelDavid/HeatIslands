@@ -10,6 +10,7 @@ import '../styles/styles.css';
 import '../styles/form.css';
 import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
+import { TailSpin } from 'react-loader-spinner'; // Import the spinner
 
 function App() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
   const [showContactUsModal, setShowContactUsModal] = useState(false);
+  const [loading, setLoading] = useState(false); // State for loading
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -57,6 +59,8 @@ function App() {
       type: formData.type,
     };
 
+    setLoading(true); // Set loading to true before the request
+
     try {
       const response = await fetch('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
@@ -76,6 +80,8 @@ function App() {
     } catch (error) {
       console.error('Error:', error);
       setResponseText(error.message);
+    } finally {
+      setLoading(false); // Set loading to false after the request
     }
   };
 
@@ -92,7 +98,7 @@ function App() {
   };
 
   return (
-    <AuthProvider> {/* Wrap your component hierarchy with AuthProvider */}
+    <AuthProvider>
       <div className="container">
         <Navbar 
           setShowLogin={toggleLogin} 
@@ -159,7 +165,14 @@ function App() {
             </select>
           </label>
           <br />
-          <button type="submit">Show the map</button>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button type="submit">Show the map</button>
+            {loading && (
+              <div style={{ marginLeft: '10px' }}>
+                <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
+              </div>
+            )}
+          </div>
         </form>
         {mapUrl && (
           <div>
