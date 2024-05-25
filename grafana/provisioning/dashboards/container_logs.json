@@ -1,59 +1,36 @@
 {
   "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
+    "list": []
   },
   "editable": true,
-  "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "links": [],
   "panels": [
     {
-      "title": "Container Logs",
-      "type": "logs",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "container_log{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}",
+          "expr": "sum(rate(container_log_entries_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[5m])) by (container_label_com_docker_compose_service)",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "A"
         }
       ],
+      "title": "Container Logs",
+      "type": "logs",
+      "options": {
+        "showLabels": true,
+        "wrapLogMessage": true
+      },
       "gridPos": {
         "h": 20,
         "w": 24,
         "x": 0,
         "y": 0
-      },
-      "options": {
-        "showLabels": true,
-        "wrapLogMessage": true
       }
     }
   ],
   "schemaVersion": 27,
   "style": "dark",
   "tags": ["prometheus", "docker", "logs"],
-  "templating": {
-    "list": [
-      {
-        "type": "datasource",
-        "datasource": "Prometheus",
-        "name": "DS_PROMETHEUS",
-        "refresh": 1
-      }
-    ]
-  },
   "time": {
     "from": "now-6h",
     "to": "now"

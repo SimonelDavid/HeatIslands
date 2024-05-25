@@ -1,55 +1,34 @@
 {
   "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
+    "list": []
   },
   "editable": true,
-  "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "links": [],
   "panels": [
     {
-      "title": "CPU Usage",
-      "type": "graph",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m])",
+          "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[5m])",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "A"
         }
       ],
+      "title": "Container CPU Usage",
+      "type": "timeseries",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      },
       "gridPos": {
         "h": 9,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 0
-      },
-      "yaxes": [
-        {
-          "format": "percent",
-          "logBase": 1,
-          "max": null,
-          "min": "0"
-        },
-        {
-          "format": "short"
-        }
-      ]
+      }
     },
     {
-      "title": "Memory Usage",
-      "type": "graph",
       "datasource": "Prometheus",
       "targets": [
         {
@@ -58,67 +37,70 @@
           "refId": "B"
         }
       ],
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 0
+      "title": "Container Memory Usage",
+      "type": "timeseries",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
       },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "logBase": 1,
-          "max": null,
-          "min": "0"
-        },
-        {
-          "format": "short"
-        }
-      ]
-    },
-    {
-      "title": "Network I/O",
-      "type": "graph",
-      "datasource": "Prometheus",
-      "targets": [
-        {
-          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m]) + rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[1m])",
-          "legendFormat": "{{container_label_com_docker_compose_service}}",
-          "refId": "C"
-        }
-      ],
       "gridPos": {
         "h": 9,
         "w": 24,
         "x": 0,
         "y": 9
-      },
-      "yaxes": [
+      }
+    },
+    {
+      "datasource": "Prometheus",
+      "targets": [
         {
-          "format": "bps",
-          "logBase": 1,
-          "max": null,
-          "min": "0"
-        },
-        {
-          "format": "short"
+          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[5m]) + rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}[5m])",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "C"
         }
-      ]
+      ],
+      "title": "Container Network I/O",
+      "type": "timeseries",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        }
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      }
+    },
+    {
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time() - container_last_seen{container_label_com_docker_compose_service=~\"backend|frontend|nginx\"}",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "D"
+        }
+      ],
+      "title": "Container Uptime",
+      "type": "timeseries",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      }
     }
   ],
   "schemaVersion": 27,
   "style": "dark",
   "tags": ["prometheus", "docker", "containers"],
-  "templating": {
-    "list": [
-      {
-        "type": "datasource",
-        "datasource": "Prometheus",
-        "name": "DS_PROMETHEUS",
-        "refresh": 1
-      }
-    ]
-  },
   "time": {
     "from": "now-6h",
     "to": "now"
@@ -128,7 +110,7 @@
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
-  "title": "Container Monitoring",
-  "uid": "new-dashboard",
+  "title": "Container Stats",
+  "uid": "container-stats",
   "version": 1
 }

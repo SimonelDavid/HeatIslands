@@ -1,55 +1,34 @@
 {
     "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": "-- Grafana --",
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "type": "dashboard"
-        }
-      ]
+      "list": []
     },
     "editable": true,
-    "gnetId": null,
     "graphTooltip": 0,
-    "id": null,
-    "links": [],
     "panels": [
       {
-        "title": "Machine CPU Usage",
-        "type": "graph",
         "datasource": "Prometheus",
         "targets": [
           {
-            "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{job=\"node-exporter\", mode=\"idle\"}[5m])) * 100)",
+            "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
             "legendFormat": "CPU Usage",
             "refId": "A"
           }
         ],
+        "title": "Machine CPU Usage",
+        "type": "timeseries",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
         "gridPos": {
           "h": 9,
           "w": 24,
           "x": 0,
           "y": 0
-        },
-        "yaxes": [
-          {
-            "format": "percent",
-            "logBase": 1,
-            "max": 100,
-            "min": "0"
-          },
-          {
-            "format": "short"
-          }
-        ]
+        }
       },
       {
-        "title": "Machine Memory Usage",
-        "type": "graph",
         "datasource": "Prometheus",
         "targets": [
           {
@@ -58,38 +37,24 @@
             "refId": "B"
           }
         ],
+        "title": "Machine Memory Usage",
+        "type": "timeseries",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
         "gridPos": {
           "h": 9,
           "w": 24,
           "x": 0,
           "y": 9
-        },
-        "yaxes": [
-          {
-            "format": "percent",
-            "logBase": 1,
-            "max": 100,
-            "min": "0"
-          },
-          {
-            "format": "short"
-          }
-        ]
+        }
       }
     ],
     "schemaVersion": 27,
     "style": "dark",
     "tags": ["prometheus", "machine", "stats"],
-    "templating": {
-      "list": [
-        {
-          "type": "datasource",
-          "datasource": "Prometheus",
-          "name": "DS_PROMETHEUS",
-          "refresh": 1
-        }
-      ]
-    },
     "time": {
       "from": "now-6h",
       "to": "now"
