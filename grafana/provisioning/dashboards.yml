@@ -9,3 +9,8 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards
+
+dashboardFiles:
+  - /etc/grafana/provisioning/dashboards/container_stats.json
+  - /etc/grafana/provisioning/dashboards/container_logs.json
+  - /etc/grafana/provisioning/dashboards/machine_stats.json
