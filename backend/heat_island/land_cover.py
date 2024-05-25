@@ -3,6 +3,7 @@ import sys
 import csv
 import os
 from retreive_boundary import get_bounding_boxes
+import json
 
 # Authenticate to Earth Engine
 service_account = 'api-call-simonel@ee-simoneldavid.iam.gserviceaccount.com'
@@ -11,7 +12,7 @@ ee.Initialize(credentials)
 
 # Ensure that the city name and years are provided as command-line arguments
 if len(sys.argv) != 7:
-    print("Usage: python3 land_cover.py <city_name> <address_type>")
+    print("Usage: python3 land_cover.py <city_name> <start_year> <end_year> <start_month> <end_month> <address_type>")
     sys.exit(1)
 
 # Get the city name, start year, and end year from the command-line arguments
@@ -22,25 +23,34 @@ start_month = int(sys.argv[4])
 end_month = int(sys.argv[5])
 address_type = sys.argv[6]
 
-def get_aoi(city_name, address_type):
-    bounding_box = get_bounding_boxes(city_name, address_type)
-    print(bounding_box)
-    
-    if bounding_box:
-        # Here, make sure you are iterating over the correct structure
-        # Assuming bounding_box is a list of coordinate pairs
-        return ee.Geometry.Polygon([bounding_box])
-    else:
-        return None
+# Define the path to the CSV file containing the boundary
+boundary_csv_file = f'heat_island/csv_export/boundary/{city_name}_{start_year}_{end_year}_{start_month}_{end_month}_{address_type}_heat_island_contours.csv'
 
-cluj_napoca = get_aoi(city_name, address_type)
+# Function to read the boundary from the CSV file
+def read_boundary_from_csv(file_path):
+    with open(file_path, mode='r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Assuming the boundary is in the 'coordinates' column and is a JSON string
+            coordinates = json.loads(row['coordinates'])
+            return coordinates
+    return None
+
+# Get the AOI coordinates from the CSV file
+aoi_coordinates = read_boundary_from_csv(boundary_csv_file)
+
+if not aoi_coordinates:
+    print("Failed to retrieve AOI from the CSV file.")
+    sys.exit(1)
+
+# Create an AOI using the coordinates from the CSV file
+aoi = ee.Geometry.Polygon(aoi_coordinates)
 
 # Load a land cover dataset (MODIS Land Cover Type Yearly Global 500m)
-landcover = ee.Image('MODIS/006/MCD12Q1/2019_01_01') \
-    .select('LC_Type1')
+landcover = ee.Image('MODIS/006/MCD12Q1/2019_01_01').select('LC_Type1')
 
 # Mask and clip to the area of interest
-landcover_cluj = landcover.clip(cluj_napoca)
+landcover_cluj = landcover.clip(aoi)
 
 # Calculate the area of each land cover type
 areaImage = ee.Image.pixelArea().addBands(landcover_cluj)
@@ -49,13 +59,13 @@ areaReducer = ee.Reducer.sum().group(1, 'landcover_type')
 # Compute the area for each land cover type in square meters
 landcoverArea = areaImage.reduceRegion(
     reducer=areaReducer, 
-    geometry=cluj_napoca, 
+    geometry=aoi, 
     scale=500, 
     maxPixels=1e8
 )
 
 # Calculate total area for normalization
-totalArea = ee.Number(cluj_napoca.area())
+totalArea = ee.Number(aoi.area())
 
 # Function to calculate percentage
 def calculate_percentage(dict_item):
@@ -88,34 +98,50 @@ landcover_names = {
     17: 'Water Bodies',
 }
 
+# Mapping of land cover types to broader categories
+category_mapping = {
+    'Dense green area': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    'Water Area': [11, 17],
+    'Urban built-up area': [13],
+    'Agriculture area': [12, 14],
+    'Mixed green, water and built-up area': [10, 15, 16]
+}
+
 # Calculate percentages and get information
 percentageResultsInfo = percentageResults.getInfo()
 
-# Create a list for CSV data
-csv_data = []
+# Initialize a dictionary to hold grouped category percentages
+grouped_percentages = {
+    'Dense green area': 0,
+    'Water Area': 0,
+    'Urban built-up area': 0,
+    'Agriculture area': 0,
+    'Mixed green, water and built-up area': 0
+}
 
-# Loop through the results and match land cover types with names
+# Loop through the results and group percentages into categories
 for result in percentageResultsInfo:
     landcover_type = result['landcover_type']
     percentage = result['percentage']
-    landcover_name = landcover_names.get(landcover_type, "Unknown")
+    
+    # Find the corresponding category for the landcover type
+    for category, types in category_mapping.items():
+        if landcover_type in types:
+            grouped_percentages[category] += percentage
+            break
 
-    # Add to CSV data list
-    csv_data.append({
-        'landcover_name': landcover_name,
-        'percentage': percentage
-    })
+# Create a list for CSV data
+csv_data = [{'category': category, 'percentage': percentage} for category, percentage in grouped_percentages.items()]
 
-download_dir_csv = 'heat_island/csv_export'
+download_dir_csv = 'heat_island/csv_export/landcover'
 if not os.path.exists(download_dir_csv):
     os.makedirs(download_dir_csv)
 
 csv_file = os.path.join(download_dir_csv, f'{city_name}_{start_year}_{end_year}_{start_month}_{end_month}_{address_type}.csv')
 
-
 # Write data to CSV
 with open(csv_file, mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=['landcover_name', 'percentage'])
+    writer = csv.DictWriter(file, fieldnames=['category', 'percentage'])
     writer.writeheader()
     writer.writerows(csv_data)
 

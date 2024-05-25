@@ -6,6 +6,7 @@ from IPython.display import Image
 import os
 import sys
 import time
+import csv
 from retreive_boundary import get_bounding_boxes
 from sklearn.cluster import KMeans
 import numpy as np
@@ -64,8 +65,6 @@ def get_aoi(city_name, address_type):
     print(bounding_box)
     
     if bounding_box:
-        # Here, make sure you are iterating over the correct structure
-        # Assuming bounding_box is a list of coordinate pairs
         return ee.Geometry.Polygon([bounding_box])
     else:
         return None
@@ -149,7 +148,6 @@ cold_spot_threshold_temp = mean_temp - 1 * std_dev_temp
 
 def detect_heat_island_contours(image, threshold_temp):
     mask = image.gt(threshold_temp).selfMask()
-    # Increase the radius and iterations to merge smaller heat islands into larger ones
     connected = mask.focal_max(kernel=ee.Kernel.circle(radius=7), iterations=8)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
@@ -162,7 +160,6 @@ def detect_heat_island_contours(image, threshold_temp):
 
 def detect_hot_spot_contours(image, threshold_temp):
     mask = image.gt(threshold_temp).selfMask()
-    # Increase the radius and iterations to merge smaller hot spots into larger ones
     connected = mask.focal_max(kernel=ee.Kernel.circle(radius=1), iterations=1)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
@@ -175,7 +172,6 @@ def detect_hot_spot_contours(image, threshold_temp):
 
 def detect_cold_spot_contours(image, threshold_temp):
     mask = image.lt(threshold_temp).selfMask()
-    # Increase the radius and iterations to merge smaller cold spots into larger ones
     connected = mask.focal_min(kernel=ee.Kernel.circle(radius=2), iterations=3)
     vectors = connected.reduceToVectors(
         geometryType='polygon',
@@ -195,6 +191,38 @@ cold_spot_contours = detect_cold_spot_contours(clip_mean_ST.select('ST_B10'), co
 Map.addLayer(heat_island_contours, {'color': 'yellow'}, "Heat Island", DISPLAY)
 Map.addLayer(hot_spot_contours, {'color': 'red'}, "Hot Spots", DISPLAY)
 Map.addLayer(cold_spot_contours, {'color': 'blue'}, "Cold Spots", DISPLAY)
+
+# Get the list of coordinates and areas of the heat island contours
+heat_island_features = heat_island_contours.getInfo()['features']
+hot_spot_features = hot_spot_contours.getInfo()['features']
+cold_spot_features = cold_spot_contours.getInfo()['features']
+
+# Prepare data for CSV
+boundary_csv_data = []
+for feature in heat_island_features:
+    geometry = feature['geometry']
+    coordinates = geometry['coordinates']
+    area = ee.Geometry(geometry).area(maxError=1).getInfo()  # Specify an error margin
+    boundary_csv_data.append({
+        'type': geometry['type'],
+        'coordinates': coordinates,
+        'area': area
+    })
+
+# Calculate the total area for heat islands, hot spots, and cold spots
+total_heat_island_area = sum([ee.Geometry(feature['geometry']).area(maxError=1).getInfo() for feature in heat_island_features])
+total_hot_spot_area = sum([ee.Geometry(feature['geometry']).area(maxError=1).getInfo() for feature in hot_spot_features])
+total_cold_spot_area = sum([ee.Geometry(feature['geometry']).area(maxError=1).getInfo() for feature in cold_spot_features])
+
+# Prepare stats data for the CSV file
+stats_csv_data = [
+    {'category': 'Total Heat Island Area(m^2)', 'value': total_heat_island_area},
+    {'category': 'Number of Hot Spots', 'value': len(hot_spot_features)},
+    {'category': 'Total Hot Spot Area(m^2)', 'value': total_hot_spot_area},
+    {'category': 'Number of Cold Spots', 'value': len(cold_spot_features)},
+    {'category': 'Total Cold Spot Area(m^2)', 'value': total_cold_spot_area},
+    {'category': 'Total Area Surface(m^2)', 'value': ee.Geometry(aoi).area(maxError=1).getInfo()}
+]
 
 # Display the map
 Map
@@ -218,6 +246,35 @@ def is_file_written(file_path, timeout=120):
 
 # Call the function after generating the HTML file
 if is_file_written(html_file):
-    print("File written successfully.")
+    print("HTML file written successfully.")
 else:
-    print("File writing timed out.")
+    print("HTML file writing timed out.")
+
+# Directory structure
+boundary_dir = 'heat_island/csv_export/boundary'
+stats_dir = 'heat_island/csv_export/stats'
+landcover_dir = 'heat_island/csv_export/landcover'
+
+for directory in [boundary_dir, stats_dir, landcover_dir]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+# Define the CSV output paths
+boundary_csv_output_path = os.path.join(boundary_dir, f'{city_name}_{start_year}_{end_year}_{start_month}_{end_month}_{address_type}_heat_island_contours.csv')
+stats_csv_output_path = os.path.join(stats_dir, f'{city_name}_{start_year}_{end_year}_{start_month}_{end_month}_{address_type}_heat_island_stats.csv')
+
+# Write the heat island contours to a CSV file
+with open(boundary_csv_output_path, mode='w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=['type', 'coordinates', 'area'])
+    writer.writeheader()
+    writer.writerows(boundary_csv_data)
+
+print(f"Heat island contours exported successfully to {boundary_csv_output_path}")
+
+# Write the heat island stats to a CSV file
+with open(stats_csv_output_path, mode='w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=['category', 'value'])
+    writer.writeheader()
+    writer.writerows(stats_csv_data)
+
+print(f"Heat island stats exported successfully to {stats_csv_output_path}")
