@@ -125,7 +125,7 @@ function WelcomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      }, 15000); // Set timeout to 15 seconds
+      }, 120000);
 
       if (response.ok) {
         const data = await response.json();
