@@ -130,6 +130,33 @@ function WelcomePage() {
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
+
+        // Make the request to generatePDF after the showMap request is successful
+        try {
+          const pdfResponse = await fetchWithTimeout('https://heat.island.aim-space.com/api/generatePDF', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bodyData),
+          }, 15000); // Set timeout to 15 seconds
+
+          if (pdfResponse.ok) {
+            const pdfData = await pdfResponse.json();
+            setPDFUrl(pdfData.pdf_url);
+            setResponseText('');
+          } else {
+            const errorData = await pdfResponse.text();
+            console.error('Failed to fetch data', errorData);
+            setResponseText(`Error: ${errorData.message}`);
+            setPDFUrl('');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          setResponseText('An unexpected error occurred.');
+          setPDFUrl('');
+        }
+
       } else {
         const text = await response.text();
         throw new Error(`Server error: ${text}`);
@@ -137,31 +164,6 @@ function WelcomePage() {
     } catch (error) {
       console.error('Error:', error);
       setResponseText(error.message);
-    }
-
-    try {
-      const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/generatePDF', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bodyData),
-      }, 15000); // Set timeout to 15 seconds
-
-      if (response.ok) {
-        const data = await response.json();
-        setPDFUrl(data.pdf_url);
-        setResponseText('');
-      } else {
-        const errorData = await response.text();
-        console.error('Failed to fetch data', errorData);
-        setResponseText(`Error: ${errorData.message}`);
-        setPDFUrl('');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setResponseText('An unexpected error occurred.');
-      setPDFUrl('');
     } finally {
       setLoading(false); // Set loading to false after the request
     }

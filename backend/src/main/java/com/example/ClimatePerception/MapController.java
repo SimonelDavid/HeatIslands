@@ -60,7 +60,7 @@ public class MapController {
     @PostMapping(value = "/generatePDF", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> generatePDF(@RequestBody Map<String, String> formData) {
 
-        log.info("Received request for showMap with data: " + formData);
+        log.info("Received request for generatePDF with data: " + formData);
 
         String city = formData.get("cityName");
         String type = formData.get("type");
