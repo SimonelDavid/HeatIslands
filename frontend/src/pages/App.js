@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider } from '../pages/AuthContext';
 import Navbar from '../pages/Navbar';
 import Login from '../pages/Login';
@@ -10,7 +10,29 @@ import '../styles/styles.css';
 import '../styles/form.css';
 import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
-import { TailSpin } from 'react-loader-spinner';
+import { TailSpin } from 'react-loader-spinner'; // Import the spinner
+
+const fetchWithTimeout = (url, options, timeout = 8000) => {
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const fetchPromise = fetch(url, { ...options, signal });
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+
+    fetchPromise
+      .then((response) => {
+        clearTimeout(timeoutId);
+        resolve(response);
+      })
+      .catch((error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+};
 
 function App() {
   const [formData, setFormData] = useState({
@@ -26,6 +48,8 @@ function App() {
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
   const [showContactUsModal, setShowContactUsModal] = useState(false);
   const [loading, setLoading] = useState(false); // State for loading
+  const [errors, setErrors] = useState({});
+  const [recommendation, setRecommendation] = useState('');
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -37,16 +61,41 @@ function App() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const { cityName, startDate, endDate } = formData;
+    if (!cityName) {
+      newErrors.cityName = 'Location is required.';
+    }
+    if (!startDate) {
+      newErrors.startDate = 'Start date is required.';
+    } else if (startDate.getFullYear() < 2013) {
+      newErrors.startDate = 'Start date should not be before the year 2013.';
+    }
+    if (!endDate) {
+      newErrors.endDate = 'End date is required.';
+    } else if (endDate.getFullYear() > 2023) {
+      newErrors.endDate = 'End date should not be after the year 2023.';
+    } else if (startDate && endDate && endDate <= startDate) {
+      newErrors.endDate = 'End date should be at least one month after the start date.';
+    }
+    if (startDate && ![3, 4, 5, 6, 7, 8].includes(startDate.getMonth())) {
+      setRecommendation('It is recommended to select a hot month (April to September).');
+    } else {
+      setRecommendation('');
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      formData.cityName === '' ||
-      formData.type === '' ||
-      formData.startDate === null ||
-      formData.endDate === null
-    ) {
-      setResponseText('Please fill in all required fields.');
+    if (!validateForm()) {
       return;
     }
 
@@ -62,13 +111,13 @@ function App() {
     setLoading(true); // Set loading to true before the request
 
     try {
-      const response = await fetch('https://heat.island.aim-space.com/api/showMap', {
+      const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      });
+      }, 15000); // Set timeout to 15 seconds
 
       if (response.ok) {
         const data = await response.json();
@@ -126,6 +175,7 @@ function App() {
               onChange={handleInputChange}
               placeholder="Type here..."
             />
+            {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
           </label>
           <br />
           <label data-guideline="Should not be before the year 2012;">
@@ -139,6 +189,7 @@ function App() {
               minDate={new Date(2013, 0, 1)}
               maxDate={addMonths(new Date(), -1)}
             />
+            {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
           </label>
           <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
             Select end date: 
@@ -151,6 +202,7 @@ function App() {
               minDate={new Date(2013, 0, 1)}
               maxDate={addMonths(new Date(), -1)}
             />
+            {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
           </label>
           <br />
           <label data-guideline="Select the type of location (city, county, or country).">
@@ -165,8 +217,9 @@ function App() {
             </select>
           </label>
           <br />
+          {recommendation && <div className="recommendation-popup">{recommendation}</div>}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button type="submit">Show the map</button>
+            <button type="submit" disabled={!validateForm()}>Show the map</button>
             {loading && (
               <div style={{ marginLeft: '10px' }}>
                 <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
