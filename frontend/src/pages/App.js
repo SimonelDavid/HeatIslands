@@ -102,11 +102,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!isFormValid) {
       return;
     }
-
+  
     const bodyData = {
       cityName: formData.cityName,
       startYear: formData.startDate.getFullYear().toString(),
@@ -115,9 +115,9 @@ function App() {
       endMonth: (formData.endDate.getMonth() + 1).toString(),
       type: formData.type,
     };
-
+  
     setLoading(true); // Set loading to true before the request
-
+  
     try {
       const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
@@ -126,10 +126,11 @@ function App() {
         },
         body: JSON.stringify(bodyData),
       }, 120000);
-
+  
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
+        setStats(data.stats); // Set the stats state
       } else {
         const text = await response.text();
         throw new Error(`Server error: ${text}`);
@@ -140,7 +141,7 @@ function App() {
     } finally {
       setLoading(false); // Set loading to false after the request
     }
-  };
+  };  
 
   const toggleAboutUsModal = () => {
     setShowAboutUsModal(!showAboutUsModal);
@@ -238,6 +239,16 @@ function App() {
         {mapUrl && (
           <div>
             <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
+            {stats && (
+              <div className="stats">
+                <h2>Statistics for {formData.cityName}</h2>
+                <ul>
+                  {Object.entries(stats).map(([key, value]) => (
+                    <li key={key}><strong>{key}:</strong> {value}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
         {showAboutUsModal && (

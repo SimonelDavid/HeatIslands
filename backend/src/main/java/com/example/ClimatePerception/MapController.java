@@ -24,6 +24,27 @@ public class MapController {
 
     private static final Logger log = LoggerFactory.getLogger(MapController.class);
 
+    private Map<String, String> getStatsFromCSV(String city, Map<String, String> formData) {
+        String fileNameCsv = String.format("%s_%s_%s_%s_%s_%s_city_heat_island_stats.csv", city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), formData.get("type"));
+        String filePath = "heat_island/csv_export/stats/" + fileNameCsv;
+
+        Map<String, String> stats = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    stats.put(parts[0], parts[1]);
+                }
+            }
+        } catch (IOException e) {
+            log.error("Error reading CSV file", e);
+        }
+
+        return stats;
+    }
+
     @PostMapping(value = "/showMap", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> showMap(@RequestBody Map<String, String> formData) {
 
@@ -53,7 +74,8 @@ public class MapController {
 
         String mapUrl = generateMapUrl(fileName);
         System.out.println(mapUrl);
-        return ResponseEntity.ok(Map.of("map_url", mapUrl));
+        Map<String, String> stats = getStatsFromCSV(city, formData);
+        return ResponseEntity.ok(Map.of("map_url", mapUrl, stats));
 
     }
 
