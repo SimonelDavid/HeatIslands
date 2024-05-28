@@ -12,7 +12,7 @@ import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
 import { TailSpin } from 'react-loader-spinner';
 
-const fetchWithTimeout = (url, options, timeout = 120000) => {
+const fetchWithTimeout = (url, options, timeout = 180000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -47,10 +47,11 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
   const [showContactUsModal, setShowContactUsModal] = useState(false);
-  const [loading, setLoading] = useState(false); // State for loading
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [recommendation, setRecommendation] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+  const [stats, setStats] = useState({});
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -102,11 +103,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!isFormValid) {
       return;
     }
-  
+
     const bodyData = {
       cityName: formData.cityName,
       startYear: formData.startDate.getFullYear().toString(),
@@ -115,9 +116,9 @@ function App() {
       endMonth: (formData.endDate.getMonth() + 1).toString(),
       type: formData.type,
     };
-  
+
     setLoading(true); // Set loading to true before the request
-  
+
     try {
       const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
@@ -125,8 +126,8 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      }, 120000);
-  
+      }, 180000);
+
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
@@ -141,7 +142,7 @@ function App() {
     } finally {
       setLoading(false); // Set loading to false after the request
     }
-  };  
+  };
 
   const toggleAboutUsModal = () => {
     setShowAboutUsModal(!showAboutUsModal);
