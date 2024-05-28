@@ -28,7 +28,7 @@ public class MapController {
     private static final Logger log = LoggerFactory.getLogger(MapController.class);
 
     private Map<String, String> getStatsFromCSV(String city, Map<String, String> formData) {
-        String fileNameCsv = String.format("%s_%s_%s_%s_%s_%s_city_heat_island_stats.csv", city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), formData.get("type"));
+        String fileNameCsv = String.format("%s_%s_%s_%s_%s_%s_heat_island_stats.csv", city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), formData.get("type"));
         String filePath = "heat_island/csv_export/stats/" + fileNameCsv;
 
         Map<String, String> stats = new HashMap<>();
