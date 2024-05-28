@@ -12,12 +12,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.io.FileReader;
 
 @RestController
@@ -49,8 +49,7 @@ public class MapController {
     }
 
     @PostMapping(value = "/showMap", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> showMap(@RequestBody Map<String, String> formData) {
-
+    public ResponseEntity<Map<String, Object>> showMap(@RequestBody Map<String, String> formData) {
         log.info("Received request for showMap with data: " + formData);
 
         String city = formData.get("cityName");
@@ -59,17 +58,18 @@ public class MapController {
 
         System.out.println(fileName);
 
+        Map<String, Object> response = new HashMap<>();
+
         if (checkIfHtmlFileExists(fileName)) {
             String mapUrl = generateMapUrl(fileName);
-            System.out.println(mapUrl);
-            return ResponseEntity.ok(Map.of("map_url", mapUrl));
+            response.put("map_url", mapUrl);
+            response.put("stats", getStatsFromCSV(city, formData));
+            return ResponseEntity.ok(response);
         }
 
         runHeatIslandScript(city, formData.get("startYear"), formData.get("endYear"), formData.get("startMonth"), formData.get("endMonth"), type);
 
-        // Wait for the file to be created by the Python script, with a timeout of 60 seconds
         boolean fileReady = waitForFile("heat_island/html_export/" + fileName, 120);
-
         if (!fileReady) {
             log.error("File was not created within the expected time.");
             // Handle the error condition, perhaps by returning an error response
@@ -77,9 +77,9 @@ public class MapController {
 
         String mapUrl = generateMapUrl(fileName);
         System.out.println(mapUrl);
-        Map<String, String> stats = getStatsFromCSV(city, formData);
-        return ResponseEntity.ok(Map.of("map_url", mapUrl, "stats", stats));
-
+        response.put("map_url", mapUrl);
+        response.put("stats", getStatsFromCSV(city, formData));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/generatePDF", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
