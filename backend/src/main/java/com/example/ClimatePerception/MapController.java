@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.io.FileReader;
 
 @RestController
 @RequestMapping("/api")
@@ -75,7 +78,7 @@ public class MapController {
         String mapUrl = generateMapUrl(fileName);
         System.out.println(mapUrl);
         Map<String, String> stats = getStatsFromCSV(city, formData);
-        return ResponseEntity.ok(Map.of("map_url", mapUrl, stats));
+        return ResponseEntity.ok(Map.of("map_url", mapUrl, "stats", stats));
 
     }
 
