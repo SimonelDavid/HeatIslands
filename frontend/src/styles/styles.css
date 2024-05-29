@@ -93,3 +93,19 @@ label:hover::after {
   line-height: 1.4;
   margin-left: 10px;
 }
+
+
+.stats ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.stats li {
+  font-family: monospace;
+  display: flex;
+  justify-content: space-between;
+}
+
+.stats .label {
+  min-width: 300px;
+}

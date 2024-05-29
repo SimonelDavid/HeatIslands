@@ -245,7 +245,10 @@ function App() {
                 <h2>Statistics for {formData.cityName}</h2>
                 <ul>
                   {Object.entries(stats).map(([key, value]) => (
-                    <li key={key}><strong>{key}:</strong> {value}</li>
+                    <li key={key}>
+                      <span className="label">{key}</span>
+                      <span>{value}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
