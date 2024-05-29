@@ -240,7 +240,7 @@ function WelcomePage() {
             {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
           </label>
           <br />
-          <label data-guideline="Select the type of location (city, county, or country).">
+          <label data-guideline="Select the type of location (city, county, country, province, municipality, town).">
             Type:
             <select name="type" value={formData.type} onChange={handleInputChange}>
               <option value="city">City</option>
