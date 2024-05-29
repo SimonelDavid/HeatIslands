@@ -51,6 +51,7 @@ function WelcomePage() {
   const [errors, setErrors] = useState({});
   const [recommendation, setRecommendation] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+  const [stats, setStats] = useState({});
 
   const handleInputChange = (e) => {
     if (e && e.target) {
@@ -130,7 +131,7 @@ function WelcomePage() {
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
-
+        setStats(data.stats); // Set the stats state
         // Make the request to generatePDF after the showMap request is successful
         try {
           const pdfResponse = await fetchWithTimeout('https://heat.island.aim-space.com/api/generatePDF', {

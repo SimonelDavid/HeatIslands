@@ -35,7 +35,12 @@ public class MapController {
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath, StandardCharsets.UTF_8))) {
             String line;
+            boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue; // Skip the header line
+                }
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
                     stats.put(parts[0], parts[1]);
