@@ -34,9 +34,11 @@ const fetchWithTimeout = (url, options, timeout = 120000) => {
 };
 
 function WelcomePage() {
+  const minDate = new Date(2013, 0, 1);
+
   const [formData, setFormData] = useState({
     cityName: '',
-    startDate: null,
+    startDate: minDate,
     endDate: null,
     type: 'city'
   });
@@ -222,7 +224,7 @@ function WelcomePage() {
               onChange={(date) => handleDateChange('startDate', date)}
               placeholderText="Select start date"
               dateFormat="yyyy-MM-dd"
-              minDate={new Date(2013, 0, 1)}
+              minDate={minDate}
               maxDate={addMonths(new Date(), -1)}
             />
             {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
@@ -235,7 +237,7 @@ function WelcomePage() {
               onChange={(date) => handleDateChange('endDate', date)}
               placeholderText="Select end date"
               dateFormat="yyyy-MM-dd"
-              minDate={new Date(2013, 0, 1)}
+              minDate={minDate}
               maxDate={addMonths(new Date(), -1)}
             />
             {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
