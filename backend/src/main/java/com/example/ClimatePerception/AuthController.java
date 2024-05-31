@@ -1,6 +1,7 @@
 package com.example.ClimatePerception;
 
 import com.example.ClimatePerception.model.User;
+import com.example.ClimatePerception.service.JwtService;
 import com.example.ClimatePerception.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> credentials) {
