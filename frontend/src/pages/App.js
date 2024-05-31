@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AuthProvider } from '../pages/AuthContext';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../pages/AuthContext';
 import Navbar from '../pages/Navbar';
 import Login from '../pages/Login';
 import AboutUs from '../pages/AboutUs';
@@ -37,11 +37,12 @@ const fetchWithTimeout = (url, options, timeout = 180000) => {
 function App() {
   const minDate = new Date(2013, 0, 1);
 
+  const { isLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     cityName: '',
     startDate: minDate,
     endDate: null,
-    type: 'city'
+    type: 'city',
   });
 
   const [mapUrl, setMapUrl] = useState('');
@@ -159,24 +160,29 @@ function App() {
   };
 
   return (
-    <AuthProvider>
-      <div className="container">
-        <Navbar 
-          setShowLogin={toggleLogin} 
-          toggleAboutUsModal={toggleAboutUsModal} 
-          toggleContactUsModal={toggleContactUsModal}
-        />
-        <div>
-          <header>
-            <h1>Welcome to the Heat Island Analysis Tool</h1>
-            <p>This tool allows you to analyze urban heat islands by selecting a specific location, type of location (city, county, or country), and a time range. Upon submission, you will receive a heat map displaying the heat island effect for your specified parameters.</p>
-          </header>
+    <div className="container">
+      <Navbar 
+        setShowLogin={toggleLogin} 
+        toggleAboutUsModal={toggleAboutUsModal} 
+        toggleContactUsModal={toggleContactUsModal}
+      />
+      <div>
+        <header>
+          <h1>Welcome to the Heat Island Analysis Tool</h1>
+          <p>This tool allows you to analyze urban heat islands by selecting a specific location, type of location (city, county, or country), and a time range. Upon submission, you will receive a heat map displaying the heat island effect for your specified parameters.</p>
+        </header>
+      </div>
+      {showLogin && (
+        <div className="login-container">
+          <Login />
         </div>
-        {showLogin && (
-          <div className="login-container">
-            <Login />
-          </div>
-        )}
+      )}
+      {!isLoggedIn && (
+        <div className="login-container">
+          <Login />
+        </div>
+      )}
+      {isLoggedIn && (
         <form onSubmit={handleSubmit}>
           <label data-guideline="Enter the name of the city, county or country you want to analyze.">
             Location:
@@ -239,42 +245,42 @@ function App() {
             )}
           </div>
         </form>
-        {mapUrl && (
-          <div>
-            <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
-            {stats && (
-              <div className="stats">
-                <h2>Statistics for {formData.cityName}</h2>
-                <ul>
-                  {Object.entries(stats).map(([key, value]) => (
-                    <li key={key}>
-                      <span className="label">{key}</span>
-                      <span>{value}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-        {showAboutUsModal && (
-          <div className="about-us-modal">
-            <button onClick={toggleAboutUsModal} className="close-button">X</button>
-            <AboutUs />
-          </div>
-        )}
-        {showContactUsModal && (
-          <div className="contact-us-modal">
-            <button onClick={toggleContactUsModal} className="close-button">X</button>
-            <ContactUs />
-          </div>
-        )}
-        <p>{responseText}</p>
-        <div id="footer" className='footer'>
-          <p>©DAVID Simonel-Olimpiu All rights reserved 2024</p>
+      )}
+      {mapUrl && (
+        <div>
+          <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
+          {stats && (
+            <div className="stats">
+              <h2>Statistics for {formData.cityName}</h2>
+              <ul>
+                {Object.entries(stats).map(([key, value]) => (
+                  <li key={key}>
+                    <span className="label">{key}</span>
+                    <span>{value}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
+      )}
+      {showAboutUsModal && (
+        <div className="about-us-modal">
+          <button onClick={toggleAboutUsModal} className="close-button">X</button>
+          <AboutUs />
+        </div>
+      )}
+      {showContactUsModal && (
+        <div className="contact-us-modal">
+          <button onClick={toggleContactUsModal} className="close-button">X</button>
+          <ContactUs />
+        </div>
+      )}
+      <p>{responseText}</p>
+      <div id="footer" className='footer'>
+        <p>©DAVID Simonel-Olimpiu All rights reserved 2024</p>
       </div>
-    </AuthProvider>
+    </div>
   );
 }
 
