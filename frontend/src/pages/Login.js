@@ -2,11 +2,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
 
 function Login() {
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loginMessage, setLoginMessage] = useState('');
   const { setLoggedIn } = useContext(AuthContext);
 
@@ -39,7 +35,7 @@ function Login() {
         const token = await response.text();
         localStorage.setItem('token', token);
         setLoggedIn(true);
-        window.location.href = '/welcome'; // Redirect on successful login
+        window.location.href = '/welcome';
       } else {
         setLoginMessage('Incorrect login credentials');
       }
