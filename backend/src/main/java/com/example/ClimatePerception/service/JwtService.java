@@ -26,7 +26,7 @@ public class JwtService {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
     }
 
@@ -40,7 +40,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
     }
 
     private boolean isTokenExpired(String token) {
