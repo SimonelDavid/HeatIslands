@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loginMessage, setLoginMessage] = useState('');
   const { setLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +37,7 @@ function Login() {
         const token = await response.text();
         localStorage.setItem('token', token);
         setLoggedIn(true);
-        window.location.href = '/welcome';
+        navigate('/welcome'); // Use navigate for routing
       } else {
         setLoginMessage('Incorrect login credentials');
       }

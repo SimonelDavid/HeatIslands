@@ -16,13 +16,14 @@ function Navbar({ setShowLogin, goToHome, toggleAboutUsModal, toggleContactUsMod
           <li className="navbar-item">
             <a href="#home" onClick={goToHome}>Home</a>
           </li>
-          {isLoggedIn ? (
-            <li className="navbar-item">
-              <a href="#logout" onClick={logout}>Logout</a>
-            </li>
-          ) : (
+          {!isLoggedIn && (
             <li className="navbar-item">
               <a href="#login" onClick={() => setShowLogin(true)}>Login</a>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li className="navbar-item">
+              <a href="#logout" onClick={logout}>Logout</a>
             </li>
           )}
           <li className="navbar-item">
