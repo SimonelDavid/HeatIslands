@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../pages/AuthContext';
 import Navbar from '../pages/Navbar';
 import Login from '../pages/Login';
 import AboutUs from '../pages/AboutUs';
@@ -11,6 +10,7 @@ import '../styles/form.css';
 import '../styles/navbar.css';
 import { addMonths } from 'date-fns';
 import { TailSpin } from 'react-loader-spinner';
+import { AuthContext } from '../pages/AuthContext';
 
 const fetchWithTimeout = (url, options, timeout = 180000) => {
   return new Promise((resolve, reject) => {
@@ -37,12 +37,11 @@ const fetchWithTimeout = (url, options, timeout = 180000) => {
 function App() {
   const minDate = new Date(2013, 0, 1);
 
-  const { isLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     cityName: '',
     startDate: minDate,
     endDate: null,
-    type: 'city',
+    type: 'city'
   });
 
   const [mapUrl, setMapUrl] = useState('');
@@ -177,75 +176,68 @@ function App() {
           <Login />
         </div>
       )}
-      {!isLoggedIn && (
-        <div className="login-container">
-          <Login />
+      <form onSubmit={handleSubmit}>
+        <label data-guideline="Enter the name of the city, county or country you want to analyze.">
+          Location:
+          <input
+            type="text"
+            name="cityName"
+            value={formData.cityName}
+            onChange={handleInputChange}
+            placeholder="Type here..."
+          />
+          {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
+        </label>
+        <br />
+        <label data-guideline="Should not be before the year 2012;">
+          Select start date: 
+          <DatePicker
+            selected={formData.startDate}
+            name='startDate'
+            onChange={(date) => handleDateChange('startDate', date)}
+            placeholderText="Select start date"
+            dateFormat="yyyy-MM-dd"
+            minDate={minDate}
+            maxDate={addMonths(new Date(), -1)}
+          />
+          {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
+        </label>
+        <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
+          Select end date: 
+          <DatePicker
+            selected={formData.endDate}
+            name='endDate'
+            onChange={(date) => handleDateChange('endDate', date)}
+            placeholderText="Select end date"
+            dateFormat="yyyy-MM-dd"
+            minDate={minDate}
+            maxDate={addMonths(new Date(), -1)}
+          />
+          {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
+        </label>
+        <br />
+        <label data-guideline="Select the type of location (city, county, country, province, municipality, town).">
+          Type:
+          <select name="type" value={formData.type} onChange={handleInputChange}>
+            <option value="city">City</option>
+            <option value="country">Country</option>
+            <option value="county">County</option>
+            <option value="province">Province</option>
+            <option value="municipality">Municipality</option>
+            <option value="town">Town</option>
+          </select>
+        </label>
+        <br />
+        {recommendation && <div className="recommendation-popup">{recommendation}</div>}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button type="submit" disabled={!isFormValid}>Show the map</button>
+          {loading && (
+            <div style={{ marginLeft: '10px' }}>
+              <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
+            </div>
+          )}
         </div>
-      )}
-      {isLoggedIn && (
-        <form onSubmit={handleSubmit}>
-          <label data-guideline="Enter the name of the city, county or country you want to analyze.">
-            Location:
-            <input
-              type="text"
-              name="cityName"
-              value={formData.cityName}
-              onChange={handleInputChange}
-              placeholder="Type here..."
-            />
-            {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
-          </label>
-          <br />
-          <label data-guideline="Should not be before the year 2012;">
-            Select start date: 
-            <DatePicker
-              selected={formData.startDate}
-              name='startDate'
-              onChange={(date) => handleDateChange('startDate', date)}
-              placeholderText="Select start date"
-              dateFormat="yyyy-MM-dd"
-              minDate={minDate}
-              maxDate={addMonths(new Date(), -1)}
-            />
-            {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
-          </label>
-          <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
-            Select end date: 
-            <DatePicker
-              selected={formData.endDate}
-              name='endDate'
-              onChange={(date) => handleDateChange('endDate', date)}
-              placeholderText="Select end date"
-              dateFormat="yyyy-MM-dd"
-              minDate={minDate}
-              maxDate={addMonths(new Date(), -1)}
-            />
-            {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
-          </label>
-          <br />
-          <label data-guideline="Select the type of location (city, county, country, province, municipality, town).">
-            Type:
-            <select name="type" value={formData.type} onChange={handleInputChange}>
-              <option value="city">City</option>
-              <option value="country">Country</option>
-              <option value="county">County</option>
-              <option value="province">Province</option>
-              <option value="municipality">Municipality</option>
-              <option value="town">Town</option>
-            </select>
-          </label>
-          <br />
-          {recommendation && <div className="recommendation-popup">{recommendation}</div>}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button type="submit" disabled={!isFormValid}>Show the map</button>
-            {loading && (
-              <div style={{ marginLeft: '10px' }}>
-                <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
-              </div>
-            )}
-          </div>
-        </form>
-      )}
+      </form>
       {mapUrl && (
         <div>
           <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>

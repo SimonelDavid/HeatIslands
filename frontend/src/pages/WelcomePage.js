@@ -5,7 +5,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { addMonths } from 'date-fns';
 import Navbar from '../pages/Navbar';
-import Login from '../pages/Login';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import { AuthContext } from '../pages/AuthContext';
@@ -48,7 +47,6 @@ function WelcomePage() {
   const [mapUrl, setMapUrl] = useState('');
   const [pdfUrl, setPDFUrl] = useState('');
   const [responseText, setResponseText] = useState('');
-  const [showLogin, setShowLogin] = useState(false);
   const [showAboutUsModal, setShowAboutUsModal] = useState(false);
   const [showContactUsModal, setShowContactUsModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -182,10 +180,6 @@ function WelcomePage() {
     setShowContactUsModal(!showContactUsModal);
   };
 
-  const toggleLogin = () => {
-    setShowLogin(!showLogin);
-  };
-
   const goToHome = () => {
     window.location.href = '/';
   };
@@ -193,7 +187,6 @@ function WelcomePage() {
   return (
     <div className="container">
       <Navbar 
-        setShowLogin={toggleLogin} 
         goToHome={goToHome} 
         toggleAboutUsModal={toggleAboutUsModal} 
         toggleContactUsModal={toggleContactUsModal}
@@ -205,11 +198,6 @@ function WelcomePage() {
           <button onClick={logout}>Logout</button> {/* Logout Button */}
         </header>
       </div>
-      {showLogin && (
-        <div className="login-container">
-          <Login />
-        </div>
-      )}
       <form onSubmit={handleSubmit}>
         <label data-guideline="Enter the name of the city, county or country you want to analyze.">
           Location:
