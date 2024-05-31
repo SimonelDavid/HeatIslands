@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext } from './AuthContext'; // Ensure this is imported correctly
+import { AuthContext } from './AuthContext';
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -18,10 +18,6 @@ function Login() {
     }));
   };
 
-  const redirectToWelcomePage = () => {
-    window.location.href = '/welcome';
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -31,7 +27,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch('https://heat.island.aim-space.com/login', { 
+      const response = await fetch('https://heat.island.aim-space.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,9 +36,10 @@ function Login() {
       });
 
       if (response.ok) {
-        setLoginMessage('Authentication successful');
-        setLoggedIn(true); // Update login status only on successful authentication
-        redirectToWelcomePage(); // Redirect only on successful authentication
+        const token = await response.text();
+        localStorage.setItem('token', token);
+        setLoggedIn(true);
+        window.location.href = '/welcome'; // Redirect on successful login
       } else {
         setLoginMessage('Incorrect login credentials');
       }

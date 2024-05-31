@@ -1,5 +1,5 @@
 import '../styles/styles.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../styles/form.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -8,7 +8,7 @@ import Navbar from '../pages/Navbar';
 import Login from '../pages/Login';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
-import { AuthProvider } from '../pages/AuthContext';
+import { AuthContext } from '../pages/AuthContext';
 import { TailSpin } from 'react-loader-spinner';
 
 const fetchWithTimeout = (url, options, timeout = 120000) => {
@@ -34,6 +34,8 @@ const fetchWithTimeout = (url, options, timeout = 120000) => {
 };
 
 function WelcomePage() {
+  const { logout } = useContext(AuthContext);
+
   const minDate = new Date(2013, 0, 1);
 
   const [formData, setFormData] = useState({
@@ -184,115 +186,119 @@ function WelcomePage() {
     setShowLogin(!showLogin);
   };
 
+  const goToHome = () => {
+    window.location.href = '/';
+  };
+
   return (
-    <AuthProvider> {/* Wrap your component hierarchy with AuthProvider */}
-      <div className="container">
-        <Navbar 
-          setShowLogin={toggleLogin} 
-          toggleAboutUsModal={toggleAboutUsModal} 
-          toggleContactUsModal={toggleContactUsModal}
-        />
-        <div>
-          <header>
-            <h1>You logged in!</h1>
-            <p>In addition to the maps of the heat islands, here you will receive a land cover on the chosen location and a recommendation on how to mitigate that heat island and to have fewer hotspots.</p>
-          </header>
-        </div>
-        {showLogin && (
-          <div className="login-container">
-            <Login />
-          </div>
-        )}
-        <form onSubmit={handleSubmit}>
-          <label data-guideline="Enter the name of the city, county or country you want to analyze.">
-            Location:
-            <input
-              type="text"
-              name="cityName"
-              value={formData.cityName}
-              onChange={handleInputChange}
-              placeholder="Type here..."
-            />
-            {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
-          </label>
-          <br />
-          <label data-guideline="Should not be before the year 2012;">
-            Select start date:
-            <DatePicker
-              selected={formData.startDate}
-              name='startDate'
-              onChange={(date) => handleDateChange('startDate', date)}
-              placeholderText="Select start date"
-              dateFormat="yyyy-MM-dd"
-              minDate={minDate}
-              maxDate={addMonths(new Date(), -1)}
-            />
-            {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
-          </label>
-          <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
-            Select end date:
-            <DatePicker
-              selected={formData.endDate}
-              name='endDate'
-              onChange={(date) => handleDateChange('endDate', date)}
-              placeholderText="Select end date"
-              dateFormat="yyyy-MM-dd"
-              minDate={minDate}
-              maxDate={addMonths(new Date(), -1)}
-            />
-            {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
-          </label>
-          <br />
-          <label data-guideline="Select the type of location (city, county, country, province, municipality, town).">
-            Type:
-            <select name="type" value={formData.type} onChange={handleInputChange}>
-              <option value="city">City</option>
-              <option value="country">Country</option>
-              <option value="county">County</option>
-              <option value="province">Province</option>
-              <option value="municipality">Municipality</option>
-              <option value="town">Town</option>
-            </select>
-          </label>
-          <br />
-          {recommendation && <div className="recommendation-popup">{recommendation}</div>}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button type="submit" disabled={!isFormValid}>Show the map</button>
-            {loading && (
-              <div style={{ marginLeft: '10px' }}>
-                <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
-              </div>
-            )}
-          </div>
-        </form>
-        {mapUrl && (
-          <div>
-            <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
-          </div>
-        )}
-        {pdfUrl && (
-          <div>
-            <iframe title="PDF" src={pdfUrl} width="800px" height="600px" frameBorder="0"></iframe>
-          </div>
-        )}
-        {showAboutUsModal && (
-          <div className="about-us-modal">
-            <button onClick={toggleAboutUsModal} className="close-button">X</button>
-            <AboutUs />
-          </div>
-        )}
-        {showContactUsModal && (
-          <div className="contact-us-modal">
-            <button onClick={toggleContactUsModal} className="close-button">X</button>
-            <ContactUs />
-          </div>
-        )}
-        <p>{responseText}</p>
-        <div id="footer" className='footer'>
-          <p>©DAVID Simonel-Olimpiu All rights reserved 2024</p>
-        </div>
+    <div className="container">
+      <Navbar 
+        setShowLogin={toggleLogin} 
+        goToHome={goToHome} 
+        toggleAboutUsModal={toggleAboutUsModal} 
+        toggleContactUsModal={toggleContactUsModal}
+      />
+      <div>
+        <header>
+          <h1>You logged in!</h1>
+          <p>In addition to the maps of the heat islands, here you will receive a land cover on the chosen location and a recommendation on how to mitigate that heat island and to have fewer hotspots.</p>
+          <button onClick={logout}>Logout</button> {/* Logout Button */}
+        </header>
       </div>
-    </AuthProvider>
+      {showLogin && (
+        <div className="login-container">
+          <Login />
+        </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <label data-guideline="Enter the name of the city, county or country you want to analyze.">
+          Location:
+          <input
+            type="text"
+            name="cityName"
+            value={formData.cityName}
+            onChange={handleInputChange}
+            placeholder="Type here..."
+          />
+          {errors.cityName && <div className="error-popup">{errors.cityName}</div>}
+        </label>
+        <br />
+        <label data-guideline="Should not be before the year 2012;">
+          Select start date:
+          <DatePicker
+            selected={formData.startDate}
+            name='startDate'
+            onChange={(date) => handleDateChange('startDate', date)}
+            placeholderText="Select start date"
+            dateFormat="yyyy-MM-dd"
+            minDate={minDate}
+            maxDate={addMonths(new Date(), -1)}
+          />
+          {errors.startDate && <div className="error-popup">{errors.startDate}</div>}
+        </label>
+        <label data-guideline="Should not be after the year 2023 and must be greater than the start date by at least one month.">
+          Select end date:
+          <DatePicker
+            selected={formData.endDate}
+            name='endDate'
+            onChange={(date) => handleDateChange('endDate', date)}
+            placeholderText="Select end date"
+            dateFormat="yyyy-MM-dd"
+            minDate={minDate}
+            maxDate={addMonths(new Date(), -1)}
+          />
+          {errors.endDate && <div className="error-popup">{errors.endDate}</div>}
+        </label>
+        <br />
+        <label data-guideline="Select the type of location (city, county, country, province, municipality, town).">
+          Type:
+          <select name="type" value={formData.type} onChange={handleInputChange}>
+            <option value="city">City</option>
+            <option value="country">Country</option>
+            <option value="county">County</option>
+            <option value="province">Province</option>
+            <option value="municipality">Municipality</option>
+            <option value="town">Town</option>
+          </select>
+        </label>
+        <br />
+        {recommendation && <div className="recommendation-popup">{recommendation}</div>}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button type="submit" disabled={!isFormValid}>Show the map</button>
+          {loading && (
+            <div style={{ marginLeft: '10px' }}>
+              <TailSpin height="30" width="30" color="blue" ariaLabel="loading" />
+            </div>
+          )}
+        </div>
+      </form>
+      {mapUrl && (
+        <div>
+          <iframe title="Map" src={mapUrl} width="800px" height="600px" frameBorder="0"></iframe>
+        </div>
+      )}
+      {pdfUrl && (
+        <div>
+          <iframe title="PDF" src={pdfUrl} width="800px" height="600px" frameBorder="0"></iframe>
+        </div>
+      )}
+      {showAboutUsModal && (
+        <div className="about-us-modal">
+          <button onClick={toggleAboutUsModal} className="close-button">X</button>
+          <AboutUs />
+        </div>
+      )}
+      {showContactUsModal && (
+        <div className="contact-us-modal">
+          <button onClick={toggleContactUsModal} className="close-button">X</button>
+          <ContactUs />
+        </div>
+      )}
+      <p>{responseText}</p>
+      <div id="footer" className='footer'>
+        <p>©DAVID Simonel-Olimpiu All rights reserved 2024</p>
+      </div>
+    </div>
   );
 }
 

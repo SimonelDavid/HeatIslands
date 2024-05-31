@@ -25,7 +25,8 @@ public class AuthController {
         String password = credentials.get("password");
 
         if (verifierAuthenticate(email, password)) {
-            return ResponseEntity.ok("Authentication successful");
+            String token = jwtService.generateToken(email); // Generate JWT token
+            return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect login credentials");
         }
