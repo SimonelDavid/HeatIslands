@@ -50,10 +50,10 @@ aoi = ee.Geometry.Polygon(aoi_coordinates)
 landcover = ee.Image('MODIS/006/MCD12Q1/2019_01_01').select('LC_Type1')
 
 # Mask and clip to the area of interest
-landcover_cluj = landcover.clip(aoi)
+landcover_aoi = landcover.clip(aoi)
 
 # Calculate the area of each land cover type
-areaImage = ee.Image.pixelArea().addBands(landcover_cluj)
+areaImage = ee.Image.pixelArea().addBands(landcover_aoi)
 areaReducer = ee.Reducer.sum().group(1, 'landcover_type')
 
 # Compute the area for each land cover type in square meters
@@ -95,16 +95,16 @@ landcover_names = {
     14: 'Cropland/Natural vegetation mosaic',
     15: 'Snow and ice',
     16: 'Barren or sparsely vegetated',
-    17: 'Water Bodies',
+    17: 'Water Bodies'
 }
 
 # Mapping of land cover types to broader categories
 category_mapping = {
     'Dense green area': [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    'Water Area': [11, 17],
+    'Water Area': [11, 17, 15],
     'Urban built-up area': [13],
     'Agriculture area': [12, 14],
-    'Mixed green, water and built-up area': [10, 15, 16]
+    'Mixed green, water and built-up area': [10, 16]
 }
 
 # Calculate percentages and get information

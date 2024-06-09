@@ -10,7 +10,7 @@ resource "aws_security_group" "heat_island_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["188.27.129.32/32", "46.97.169.92/32", "86.121.79.144/32"]
+    cidr_blocks = ["188.27.129.32/32", "46.97.169.92/32", "82.79.3.158/32"] # home internet ips
   }
 
   ingress {
@@ -54,5 +54,5 @@ resource "aws_instance" "heat_island" {
 
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.heat_island.id
-  allocation_id = "eipalloc-0a9d27bf8ebe8dc52"  # Use the actual allocation ID of your existing EIP
+  allocation_id = "eipalloc-0a9d27bf8ebe8dc52"
 }
