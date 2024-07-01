@@ -105,11 +105,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!isFormValid) {
       return;
     }
-
+  
     const bodyData = {
       cityName: formData.cityName,
       startYear: formData.startDate.getFullYear().toString(),
@@ -118,9 +118,9 @@ function App() {
       endMonth: (formData.endDate.getMonth() + 1).toString(),
       type: formData.type,
     };
-
+  
     setLoading(true); // Set loading to true before the request
-
+  
     try {
       const response = await fetchWithTimeout('https://heat.island.aim-space.com/api/showMap', {
         method: 'POST',
@@ -129,18 +129,23 @@ function App() {
         },
         body: JSON.stringify(bodyData),
       }, 180000);
-
+  
       if (response.ok) {
         const data = await response.json();
         setMapUrl(data.map_url);
         setStats(data.stats); // Set the stats state
+        setResponseText(''); // Clear any previous error message
       } else {
         const text = await response.text();
         throw new Error(`Server error: ${text}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      setResponseText(error.message);
+      if (error.name === 'AbortError') {
+        setResponseText('The request timed out. Please press the button again.');
+      } else {
+        setResponseText('An error occurred. Please try again.');
+      }
     } finally {
       setLoading(false); // Set loading to false after the request
     }
