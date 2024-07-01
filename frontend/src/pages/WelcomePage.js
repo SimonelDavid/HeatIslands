@@ -10,7 +10,7 @@ import ContactUs from '../pages/ContactUs';
 import { AuthContext } from '../pages/AuthContext';
 import { TailSpin } from 'react-loader-spinner';
 
-const fetchWithTimeout = (url, options, timeout = 120000) => {
+const fetchWithTimeout = (url, options, timeout = 400000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -128,7 +128,7 @@ function WelcomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      }, 120000);
+      }, 400000);
 
       if (response.ok) {
         const data = await response.json();
@@ -166,7 +166,11 @@ function WelcomePage() {
       }
     } catch (error) {
       console.error('Error:', error);
-      setResponseText(error.message);
+      if (error.name === 'AbortError') {
+        setResponseText('The request timed out. Please press the button again.');
+      } else {
+        setResponseText('An error occurred. Please try again.');
+      }
     } finally {
       setLoading(false); // Set loading to false after the request
     }

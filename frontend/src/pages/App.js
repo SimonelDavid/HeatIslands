@@ -12,7 +12,7 @@ import { addMonths } from 'date-fns';
 import { TailSpin } from 'react-loader-spinner';
 import { AuthContext } from '../pages/AuthContext';
 
-const fetchWithTimeout = (url, options, timeout = 180000) => {
+const fetchWithTimeout = (url, options, timeout = 400000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -128,7 +128,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      }, 180000);
+      }, 400000);
   
       if (response.ok) {
         const data = await response.json();
