@@ -10,7 +10,7 @@ resource "aws_security_group" "heat_island_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["188.27.129.32/32", "46.97.169.92/32", "82.79.3.158/32"] # home internet ips
+    cidr_blocks = ["188.27.131.218/32", "46.97.169.92/32", "82.79.3.158/32"] # home internet ips
   }
 
   ingress {
@@ -37,7 +37,7 @@ resource "aws_security_group" "heat_island_sg" {
 
 resource "aws_instance" "heat_island" {
   ami                    = "ami-042e6fdb154c830c5"  
-  instance_type          = "t2.medium"
+  instance_type          = "t3a.large"
   key_name               = "heat-island"
   security_groups        = [aws_security_group.heat_island_sg.name]
   associate_public_ip_address = true
