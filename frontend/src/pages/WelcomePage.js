@@ -10,7 +10,7 @@ import ContactUs from '../pages/ContactUs';
 import { AuthContext } from '../pages/AuthContext';
 import { TailSpin } from 'react-loader-spinner';
 
-const fetchWithTimeout = (url, options, timeout = 400000) => {
+const fetchWithTimeout = (url, options, timeout = 600000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -128,7 +128,7 @@ function WelcomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
-      }, 400000);
+      }, 600000);
 
       if (response.ok) {
         const data = await response.json();
